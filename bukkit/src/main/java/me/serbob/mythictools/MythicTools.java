@@ -26,13 +26,16 @@ import me.serbob.mythictools.manager.HooksManager;
 import me.serbob.mythictools.manager.SelfDestructManager;
 import me.serbob.mythictools.manager.ToolManager;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class MythicTools extends JavaPlugin {
+public final class MythicTools extends JavaPlugin implements Listener {
     private static @Getter MythicTools instance;
 
     final String RESET = "\u001B[0m";
@@ -68,6 +71,8 @@ public final class MythicTools extends JavaPlugin {
         for (Abilities ability : Abilities.values()) {
             Bukkit.getPluginManager().registerEvents(ability.getAbility(), this);
         }
+
+        Bukkit.getPluginManager().registerEvents(this, this);
 
         NBT.preloadApi();
 
@@ -179,6 +184,11 @@ public final class MythicTools extends JavaPlugin {
 
             PermissionManager.getInstance().addPermissionHook(permissionHook);
         });
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        SelfDestructManager.getInstance().onPlayerJoin(event.getPlayer());
     }
 
     private void log(String msg) {

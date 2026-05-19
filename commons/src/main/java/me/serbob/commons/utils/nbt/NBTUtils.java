@@ -12,6 +12,7 @@ public class NBTUtils {
     private static final NBTUtils instance = new NBTUtils();
 
     private static final String SECONDS_KEY = "secondsRemaining";
+    private static final String EXPIRATION_KEY = "expirationTimestamp";
 
     public boolean hasNbt(ItemStack item, String nbt) {
         return NBT.readNbt(item).getBoolean(nbt);
@@ -38,6 +39,26 @@ public class NBTUtils {
     public void setSecondsRemaining(ItemStack item, long seconds) {
         NBT.modify(item, nbt -> {
             nbt.setLong(SECONDS_KEY, seconds);
+        });
+    }
+
+    public boolean hasExpirationTimestamp(ItemStack item) {
+        return NBT.readNbt(item).hasTag(EXPIRATION_KEY);
+    }
+
+    public long getExpirationTimestamp(ItemStack item) {
+        return NBT.readNbt(item).getLong(EXPIRATION_KEY);
+    }
+
+    public void setExpirationTimestamp(ItemStack item, long timestamp) {
+        NBT.modify(item, nbt -> {
+            nbt.setLong(EXPIRATION_KEY, timestamp);
+        });
+    }
+
+    public void removeSecondsRemaining(ItemStack item) {
+        NBT.modify(item, nbt -> {
+            nbt.removeKey(SECONDS_KEY);
         });
     }
 }

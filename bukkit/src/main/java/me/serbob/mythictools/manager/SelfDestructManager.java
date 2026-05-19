@@ -36,7 +36,7 @@ public class SelfDestructManager {
 
     public void load() {
         FileConfiguration config = ConfigSelector.SELFDESTRUCT.getConfig();
-        timerUpdateFrequency = config.getLong("timer_update_frequency");
+        timerUpdateFrequency = config.getLong("timer_update_frequency", 20L);
 
         selfDestructPrefix = ChatUtil.c(config.getString("lore.self_destruct_prefix"));
         timerPrefix = ChatUtil.c(config.getString("lore.timer_prefix"));
@@ -44,6 +44,7 @@ public class SelfDestructManager {
         timeFormats.put("days", config.getString("time_format.days_format"));
         timeFormats.put("hours", config.getString("time_format.hours_format"));
         timeFormats.put("minutes", config.getString("time_format.minutes_format"));
+        timeFormats.put("seconds", config.getString("time_format.seconds_format"));
         timeFormats.put("empty", config.getString("time_format.empty_format"));
     }
 
@@ -56,45 +57,78 @@ public class SelfDestructManager {
                 20L, timerUpdateFrequency);
     }
 
-    private long getTimerUpdateFreqInSeconds() {
-        return timerUpdateFrequency / 20;
-    }
-
     private void processAllPlayersAsync() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             Commons.getFoliaLib().getScheduler().runLater(task -> {
-                Map<Integer, ItemUpdate> updates = new HashMap<>();
-
-                for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
-                    ItemStack item = player.getInventory().getItem(slot);
-
-                    if (item == null || item.getType() == Material.AIR) continue;
-                    if (!NBTUtils.getInstance().hasSecondsRemaining(item)) continue;
-
-                    long secondsRemaining = NBTUtils.getInstance().getSecondsRemaining(item);
-                    boolean wasDelayed = secondsRemaining < 0;
-
-                    if (wasDelayed) {
-                        secondsRemaining = Math.abs(secondsRemaining) - getTimerUpdateFreqInSeconds();
-                        if (secondsRemaining <= 0) {
-                            secondsRemaining = 1;
-                        }
-                    } else {
-                        secondsRemaining -= getTimerUpdateFreqInSeconds();
-                    }
-
-                    if (!wasDelayed && secondsRemaining <= 0) {
-                        updates.put(slot, new ItemUpdate(true, 0));
-                    } else {
-                        updates.put(slot, new ItemUpdate(false, secondsRemaining));
-                    }
-                }
-
-                if (!updates.isEmpty()) {
-                    applyUpdatesForPlayer(player, updates);
-                }
+                processPlayerInventory(player);
             }, 1L);
         }
+    }
+
+    public void processPlayerInventory(Player player) {
+        Map<Integer, ItemUpdate> updates = new HashMap<>();
+
+        for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            // Migrate old items (secondsRemaining -> expirationTimestamp)
+            if (NBTUtils.getInstance().hasSecondsRemaining(item)
+                    && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
+                migrateItemToTimestamp(item);
+            }
+
+            // Process items with expirationTimestamp (new system)
+            if (NBTUtils.getInstance().hasExpirationTimestamp(item)) {
+                long expiration = NBTUtils.getInstance().getExpirationTimestamp(item);
+                long now = System.currentTimeMillis();
+                long remainingMs = expiration - now;
+
+                if (remainingMs <= 0) {
+                    updates.put(slot, new ItemUpdate(true, 0));
+                } else {
+                    updates.put(slot, new ItemUpdate(false, remainingMs / 1000));
+                }
+            }
+            // Process delayed items (old system, kept for compatibility)
+            else if (NBTUtils.getInstance().hasSecondsRemaining(item)) {
+                long secondsRemaining = NBTUtils.getInstance().getSecondsRemaining(item);
+                boolean wasDelayed = secondsRemaining < 0;
+
+                if (wasDelayed) {
+                    secondsRemaining = Math.abs(secondsRemaining) - 1;
+                    if (secondsRemaining <= 0) {
+                        secondsRemaining = 1;
+                    }
+                    NBTUtils.getInstance().setSecondsRemaining(item, -secondsRemaining);
+                } else {
+                    secondsRemaining -= 1;
+                }
+
+                if (!wasDelayed && secondsRemaining <= 0) {
+                    updates.put(slot, new ItemUpdate(true, 0));
+                } else {
+                    updates.put(slot, new ItemUpdate(false, wasDelayed ? -secondsRemaining : secondsRemaining));
+                }
+            }
+        }
+
+        if (!updates.isEmpty()) {
+            applyUpdatesForPlayer(player, updates);
+        }
+    }
+
+    private void migrateItemToTimestamp(ItemStack item) {
+        long secondsRemaining = NBTUtils.getInstance().getSecondsRemaining(item);
+        if (secondsRemaining < 0) {
+            // Delayed items: keep old system
+            return;
+        }
+
+        long expirationTimestamp = System.currentTimeMillis() + (secondsRemaining * 1000);
+        NBTUtils.getInstance().setExpirationTimestamp(item, expirationTimestamp);
+        NBTUtils.getInstance().removeSecondsRemaining(item);
     }
 
     private void applyUpdatesForPlayer(Player player, Map<Integer, ItemUpdate> updates) {
@@ -107,8 +141,12 @@ public class SelfDestructManager {
             } else {
                 ItemStack item = player.getInventory().getItem(slot);
                 if (item != null && item.getType() != Material.AIR) {
-                    NBTUtils.getInstance().setSecondsRemaining(item, update.secondsRemaining);
-                    updateItemLore(item, update.secondsRemaining);
+                    // Update NBT only for delayed items (old system)
+                    if (NBTUtils.getInstance().hasSecondsRemaining(item)
+                            && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
+                        NBTUtils.getInstance().setSecondsRemaining(item, update.secondsRemaining);
+                    }
+                    updateItemLore(item, Math.abs(update.secondsRemaining));
                 }
             }
         }
@@ -139,21 +177,20 @@ public class SelfDestructManager {
         item.setItemMeta(meta);
     }
 
-    public void applyTimerToItem(ItemStack item, long seconds, boolean delayed) {
-        NBTUtils.getInstance().setSecondsRemaining(item, delayed ? -seconds : seconds);
-        updateItemLore(item, seconds);
-    }
-
     private String formatTimeRemaining(long milliseconds) {
+        if (milliseconds <= 0) return timeFormats.get("empty");
+
         long totalSeconds = milliseconds / 1000;
         long days = totalSeconds / 86400;
         long hours = (totalSeconds % 86400) / 3600;
         long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
 
         StringBuilder result = new StringBuilder();
         if (days > 0) result.append(String.format(timeFormats.get("days"), days));
         if (hours > 0) result.append(String.format(timeFormats.get("hours"), hours));
         if (minutes > 0) result.append(String.format(timeFormats.get("minutes"), minutes));
+        if (seconds > 0 || result.length() == 0) result.append(String.format(timeFormats.get("seconds"), seconds));
 
         return result.length() > 0 ? result.toString().trim() : timeFormats.get("empty");
     }
@@ -173,8 +210,22 @@ public class SelfDestructManager {
 
     public void addTimedItem(Player player, ItemStack item, long destructTimeMillis, boolean delayed) {
         long seconds = destructTimeMillis / 1000;
-        NBTUtils.getInstance().setSecondsRemaining(item, delayed ? -seconds : seconds);
+        applyTimerToItem(item, seconds, delayed);
+    }
+
+    public void applyTimerToItem(ItemStack item, long seconds, boolean delayed) {
+        if (delayed) {
+            // Keep old system for delayed items
+            NBTUtils.getInstance().setSecondsRemaining(item, -seconds);
+        } else {
+            long expirationTimestamp = System.currentTimeMillis() + (seconds * 1000);
+            NBTUtils.getInstance().setExpirationTimestamp(item, expirationTimestamp);
+        }
         updateItemLore(item, seconds);
+    }
+
+    public void onPlayerJoin(Player player) {
+        processPlayerInventory(player);
     }
 
     private static class ItemUpdate {

@@ -1,5 +1,6 @@
 # Timer update frequency in ticks (20 ticks = 1 second)
-timer_update_frequency: 1200
+# RECOMMENDED: 20 for a visual per-second countdown
+timer_update_frequency: 20
 
 # Item lore formatting
 lore:
@@ -10,5 +11,6 @@ lore:
 time_format:
   days_format: "%dd "
   hours_format: "%dh "
-  minutes_format: "%dm"
+  minutes_format: "%dm "
+  seconds_format: "%ds"
   empty_format: "Broken"
