@@ -153,10 +153,10 @@ public class MultiToolAbility extends AbstractAbility implements Listener {
         item.setItemMeta(meta);
 
         if (newMaterial == Material.NETHERITE_SWORD) {
-            player.spawnParticle(Particle.CRIT_MAGIC, player.getLocation().add(0, 1, 0), 10, 0.3, 0.3, 0.3, 0.02);
-            player.spawnParticle(Particle.ENCHANTMENT_TABLE, player.getLocation().add(0, 1, 0), 15, 0.5, 0.5, 0.5, 0.1);
+            player.spawnParticle(Particle.ENCHANTED_HIT, player.getLocation().add(0, 1, 0), 10, 0.3, 0.3, 0.3, 0.02);
+            player.spawnParticle(Particle.ENCHANT, player.getLocation().add(0, 1, 0), 15, 0.5, 0.5, 0.5, 0.1);
         } else {
-            player.spawnParticle(Particle.SPELL_WITCH, player.getLocation().add(0, 1, 0), 5, 0.2, 0.2, 0.2, 0);
+            player.spawnParticle(Particle.WITCH, player.getLocation().add(0, 1, 0), 5, 0.2, 0.2, 0.2, 0);
         }
 
         player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.3f, 1.5f);
@@ -175,7 +175,7 @@ public class MultiToolAbility extends AbstractAbility implements Listener {
 
         block.getWorld().spawnParticle(Particle.PORTAL, loc, 8, 0.1, 0.1, 0.1, 0.01);
         block.getWorld().spawnParticle(Particle.REVERSE_PORTAL, loc, 5, 0.15, 0.15, 0.15, 0.005);
-        block.getWorld().spawnParticle(Particle.SPELL_WITCH, loc, 3, 0.1, 0.1, 0.1, 0);
+        block.getWorld().spawnParticle(Particle.WITCH, loc, 3, 0.1, 0.1, 0.1, 0);
     }
 
     @Override

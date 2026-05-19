@@ -56,7 +56,7 @@ public class DrainAbility extends AbstractAbility {
             player.playSound(centerLoc, Sound.ITEM_BUCKET_FILL, 1.0f, 0.8f);
             player.playSound(centerLoc, Sound.ENTITY_PLAYER_SPLASH, 0.5f, 1.2f);
 
-            centerLoc.getWorld().spawnParticle(Particle.WATER_BUBBLE,
+            centerLoc.getWorld().spawnParticle(Particle.BUBBLE,
                     centerLoc.add(0.5, 0.5, 0.5), 50, 1.5, 1.5, 1.5, 0.05);
         }
     }
@@ -76,7 +76,7 @@ public class DrainAbility extends AbstractAbility {
         player.playSound(centerLoc, Sound.ITEM_BUCKET_FILL, 1.0f, 0.8f);
         player.playSound(centerLoc, Sound.ENTITY_PLAYER_SPLASH, 0.5f, 1.2f);
 
-        centerLoc.getWorld().spawnParticle(Particle.WATER_BUBBLE,
+        centerLoc.getWorld().spawnParticle(Particle.BUBBLE,
                 centerLoc.add(0.5, 0.5, 0.5), 50, 1.5, 1.5, 1.5, 0.05);
     }
 
@@ -104,9 +104,9 @@ public class DrainAbility extends AbstractAbility {
 
                         block.getWorld().spawnParticle(Particle.PORTAL,
                                 particleLoc, 6, 0.2, 0.2, 0.2, 0.01);
-                        block.getWorld().spawnParticle(Particle.WATER_SPLASH,
+                        block.getWorld().spawnParticle(Particle.SPLASH,
                                 particleLoc, 15, 0.3, 0.3, 0.3, 0);
-                        block.getWorld().spawnParticle(Particle.SPELL_WITCH,
+                        block.getWorld().spawnParticle(Particle.WITCH,
                                 particleLoc, 3, 0.15, 0.15, 0.15, 0);
 
                         block.setType(Material.AIR);

@@ -43,7 +43,7 @@ public class DrillAbility extends AbstractAbility {
                         particleLoc, 8, 0.1, 0.1, 0.1, 0.01);
                 block.getWorld().spawnParticle(Particle.REVERSE_PORTAL,
                         particleLoc, 5, 0.15, 0.15, 0.15, 0.005);
-                block.getWorld().spawnParticle(Particle.SPELL_WITCH,
+                block.getWorld().spawnParticle(Particle.WITCH,
                         particleLoc, 3, 0.1, 0.1, 0.1, 0);
 
                 block.breakNaturally(tool);

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>me.serbob</groupId>
+    <artifactId>MythicTools-parent</artifactId>
+    <version>1.5.1-rc-12</version>
+    <packaging>pom</packaging>
+
+    <name>MythicTools Parent</name>
+    <description>MythicTools - Advanced tools plugin for Folia/Paper</description>
+
+    <modules>
+        <module>commons</module>
+        <module>api</module>
+        <module>bukkit</module>
+        <module>hooks_java17</module>
+        <module>dist</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Versions -->
+        <paper-api.version>1.21.4-R0.1-SNAPSHOT</paper-api.version>
+        <lombok.version>1.18.42</lombok.version>
+        <folialib.version>0.5.1</folialib.version>
+        <nbtapi.version>2.15.3</nbtapi.version>
+        <vaultapi.version>1.7</vaultapi.version>
+        <shopgui-api.version>3.0.0</shopgui-api.version>
+        <landsapi.version>7.24.1</landsapi.version>
+        <worldguard.version>7.0.8</worldguard.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>maven-central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>tcoded</id>
+            <url>https://repo.tcoded.com/releases</url>
+        </repository>
+        <repository>
+            <id>codemc</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Minecraft -->
+            <dependency>
+                <groupId>io.papermc.paper</groupId>
+                <artifactId>paper-api</artifactId>
+                <version>${paper-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Useful -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.tcoded</groupId>
+                <artifactId>FoliaLib</artifactId>
+                <version>${folialib.version}</version>
+            </dependency>
+
+            <!-- Plugins -->
+            <dependency>
+                <groupId>de.tr7zw</groupId>
+                <artifactId>item-nbt-api</artifactId>
+                <version>${nbtapi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.MilkBowl</groupId>
+                <artifactId>VaultAPI</artifactId>
+                <version>${vaultapi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.brcdev-minecraft</groupId>
+                <artifactId>shopgui-api</artifactId>
+                <version>${shopgui-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.angeschossen</groupId>
+                <artifactId>LandsAPI</artifactId>
+                <version>${landsapi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sk89q.worldguard</groupId>
+                <artifactId>worldguard-bukkit</artifactId>
+                <version>${worldguard.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Internal modules -->
+            <dependency>
+                <groupId>me.serbob</groupId>
+                <artifactId>MythicTools-api</artifactId>
+                <version>${project.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>me.serbob</groupId>
+                <artifactId>MythicTools-commons</artifactId>
+                <version>${project.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>me.serbob</groupId>
+                <artifactId>MythicTools-hooks_java17</artifactId>
+                <version>${project.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>me.serbob</groupId>
+                <artifactId>MythicTools-bukkit</artifactId>
+                <version>${project.version}</version>
+                <scope>compile</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <release>21</release>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

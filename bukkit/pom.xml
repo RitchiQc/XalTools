@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>me.serbob</groupId>
+        <artifactId>MythicTools-parent</artifactId>
+        <version>1.5.1-rc-12</version>
+    </parent>
+
+    <artifactId>MythicTools-bukkit</artifactId>
+    <name>MythicTools Bukkit</name>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>me.serbob</groupId>
+            <artifactId>MythicTools-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>me.serbob</groupId>
+            <artifactId>MythicTools-commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tcoded</groupId>
+            <artifactId>FoliaLib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.brcdev-minecraft</groupId>
+            <artifactId>shopgui-api</artifactId>
+        </dependency>
+
+        <!-- Local libs -->
+        <dependency>
+            <groupId>local</groupId>
+            <artifactId>CoinsEngine</artifactId>
+            <version>2.6.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/CoinsEngine-2.6.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>local</groupId>
+            <artifactId>DonutWorth</artifactId>
+            <version>1.5.0-rc-7</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/DonutWorth-1.5.0-rc-7.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>local</groupId>
+            <artifactId>EconomyShopGUI</artifactId>
+            <version>6.4.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/EconomyShopGUI-6.4.4.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>local</groupId>
+            <artifactId>PrimeSeller</artifactId>
+            <version>2.4.7</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/PrimeSeller-v2.4.7.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

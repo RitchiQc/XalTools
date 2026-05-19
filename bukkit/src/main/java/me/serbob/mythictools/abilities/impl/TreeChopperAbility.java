@@ -123,7 +123,7 @@ public class TreeChopperAbility extends AbstractAbility {
         } catch (Exception ignored) {}
 
         try {
-            block.getWorld().spawnParticle(Particle.SPELL_WITCH,
+            block.getWorld().spawnParticle(Particle.WITCH,
                     particleLoc, 5, 0.15, 0.15, 0.15, 0);
         } catch (Exception e) {
             try {
