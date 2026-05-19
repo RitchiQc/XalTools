@@ -159,10 +159,14 @@ public class SelfDestructManager {
         List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
 
         boolean found = false;
+        String newTimerLine = timerPrefix + formatTimeRemaining(Math.abs(secondsRemaining) * 1000);
         for (int i = 0; i < lore.size() - 1; i++) {
             if (lore.get(i).equals(selfDestructPrefix) &&
                     i + 1 < lore.size() && lore.get(i + 1).startsWith(timerPrefix)) {
-                lore.set(i + 1, timerPrefix + formatTimeRemaining(Math.abs(secondsRemaining) * 1000));
+                if (lore.get(i + 1).equals(newTimerLine)) {
+                    return; // No change, skip update to avoid animation
+                }
+                lore.set(i + 1, newTimerLine);
                 found = true;
                 break;
             }
@@ -170,7 +174,7 @@ public class SelfDestructManager {
 
         if (!found) {
             lore.add(selfDestructPrefix);
-            lore.add(timerPrefix + formatTimeRemaining(Math.abs(secondsRemaining) * 1000));
+            lore.add(newTimerLine);
         }
 
         meta.setLore(lore);
@@ -190,7 +194,10 @@ public class SelfDestructManager {
         if (days > 0) result.append(String.format(timeFormats.get("days"), days));
         if (hours > 0) result.append(String.format(timeFormats.get("hours"), hours));
         if (minutes > 0) result.append(String.format(timeFormats.get("minutes"), minutes));
-        if (seconds > 0 || result.length() == 0) result.append(String.format(timeFormats.get("seconds"), seconds));
+        // Only show seconds when less than 60 seconds remain to reduce item updates/animations
+        if (totalSeconds < 60 && (seconds > 0 || result.length() == 0)) {
+            result.append(String.format(timeFormats.get("seconds"), seconds));
+        }
 
         return result.length() > 0 ? result.toString().trim() : timeFormats.get("empty");
     }
