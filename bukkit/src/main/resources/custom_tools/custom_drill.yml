@@ -10,7 +10,7 @@ item:
     - "UNBREAKING:3"
     - "EFFICIENCY:5"
 
-# Available abilities:
+# Available abilities (hardcoded):
 # - amethyst_bucket
 # - drill_pickaxe
 # - amethyst_multitool
@@ -18,5 +18,10 @@ item:
 # - amethyst_shovel
 # - amethyst_axe
 # - infinite_firework
+#
+# Available abilities (custom):
+# - no_fall_damage
+# - speed_boots
+# Add your own in the custom_abilities/ folder!
 abilities:
   - "drill_pickaxe"

@@ -1,0 +1,7 @@
+# Custom Ability: No Fall Damage
+# This ability prevents fall damage when equipped on boots
+
+name: "No Fall Damage"
+nbt: "no_fall_damage"
+type: "NO_FALL_DAMAGE"
+slot: "FEET"

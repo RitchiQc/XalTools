@@ -13,7 +13,8 @@ import java.nio.file.*;
 import java.util.*;
 
 public enum DirectorySelector {
-    CUSTOM_TOOLS("custom_tools")
+    CUSTOM_TOOLS("custom_tools"),
+    CUSTOM_ABILITIES("custom_abilities")
     ;
 
     private final String directoryName;

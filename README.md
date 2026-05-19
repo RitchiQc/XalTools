@@ -42,12 +42,73 @@ dist/target/MythicTools-<version>.jar
 ## Features
 
 - Custom tools with special abilities
+- **Custom abilities** — create your own abilities via YAML!
 - Folia-supported (async region scheduling)
 - Economy integration (Vault)
 - Shop integration (ShopGUI+, EconomyShopGUI)
 - Land protection hooks (WorldGuard, Lands)
 - Self-destruct timer on items
 - Highly configurable via YAML
+
+## Available Abilities
+
+### Hardcoded Abilities
+
+| Ability | NBT Tag | Description |
+|---------|---------|-------------|
+| Amethyst Bucket | `amethyst_bucket` | Drains water/lava in a 3x3 area |
+| Drill Pickaxe | `drill_pickaxe` | Breaks 9 blocks at once (3x3) |
+| Amethyst Multitool | `amethyst_multitool` | Auto-switches tool type based on target |
+| Sell Axe | `sell_axe` | Sells chest contents on break |
+| Amethyst Shovel | `amethyst_shovel` | Breaks 9 blocks at once (3x3) |
+| Amethyst Axe | `amethyst_axe` | Chops entire trees at once |
+| Infinite Firework | `infinite_firework` | Infinite elytra boost fireworks |
+
+### Custom Abilities (create your own!)
+
+Create YAML files in the `custom_abilities/` folder. Available types:
+
+| Type | Description | Slot |
+|------|-------------|------|
+| `NO_FALL_DAMAGE` | Prevents fall damage | `FEET` (boots) |
+| `FIRE_RESISTANCE` | Fire resistance potion effect | Any armor |
+| `SPEED` | Speed potion effect | Any armor |
+| `JUMP_BOOST` | Jump boost potion effect | Any armor |
+| `NIGHT_VISION` | Night vision potion effect | Any armor |
+| `WATER_BREATHING` | Water breathing potion effect | Any armor |
+| `REGENERATION` | Regeneration potion effect | Any armor |
+| `STRENGTH` | Strength potion effect | Any armor |
+| `HASTE` | Haste potion effect | Any armor |
+| `INVISIBILITY` | Invisibility potion effect | Any armor |
+
+#### Custom Ability Example (`custom_abilities/no_fall.yml`)
+
+```yaml
+name: "No Fall Damage"
+nbt: "no_fall_damage"
+type: "NO_FALL_DAMAGE"
+slot: "FEET"
+```
+
+#### Custom Ability with Potion Effect (`custom_abilities/speed_boots.yml`)
+
+```yaml
+name: "Speed Boots"
+nbt: "speed_boots"
+type: "SPEED"
+slot: "FEET"
+potion-duration: 200    # Ticks (10 seconds)
+potion-amplifier: 1     # Effect level (0 = I, 1 = II, etc.)
+```
+
+#### Equipment Slots
+
+- `HAND` — Must be held in main hand
+- `FEET` — Must be equipped as boots
+- `LEGS` — Must be equipped as leggings
+- `CHEST` — Must be equipped as chestplate
+- `HEAD` — Must be equipped as helmet
+- `ANY_ARMOR` — Can be equipped on any armor slot
 
 ## License
 

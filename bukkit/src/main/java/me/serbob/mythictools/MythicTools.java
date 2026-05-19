@@ -4,6 +4,7 @@ import de.tr7zw.changeme.nbtapi.NBT;
 import lombok.Getter;
 import me.serbob.commons.Commons;
 import me.serbob.mythictools.abilities.Abilities;
+import me.serbob.mythictools.abilities.custom.CustomAbilityManager;
 import me.serbob.mythictools.api.currency.CurrencyManager;
 import me.serbob.mythictools.api.event.CurrencyRegistrationCompleteEvent;
 import me.serbob.mythictools.api.event.MythicToolsLoadedEvent;
@@ -67,6 +68,8 @@ public final class MythicTools extends JavaPlugin implements Listener {
 
         Arrays.stream(DirectorySelector.values()).collect(Collectors.toList())
                 .forEach(DirectorySelector::initialize);
+
+        CustomAbilityManager.getInstance().load();
 
         for (Abilities ability : Abilities.values()) {
             Bukkit.getPluginManager().registerEvents(ability.getAbility(), this);

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.serbob.commons.enums.DirectorySelector;
-import me.serbob.mythictools.abilities.Abilities;
+import me.serbob.mythictools.abilities.AbilityRegistry;
 import me.serbob.mythictools.abilities.AbstractAbility;
 import me.serbob.mythictools.tools.AbstractTool;
 import me.serbob.mythictools.tools.Tools;
@@ -37,7 +37,7 @@ public class ToolManager {
 
                     List<AbstractAbility> abilitiesList = new ArrayList<>();
                     for (String nbtAbility : abilities) {
-                        AbstractAbility ability = Abilities.getAbilityFromNBT(nbtAbility);
+                        AbstractAbility ability = AbilityRegistry.getInstance().getByNbt(nbtAbility);
 
                         if (ability == null)
                             continue;
