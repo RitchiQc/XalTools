@@ -1,0 +1,13 @@
+instant-break: false
+
+item:
+  material: NETHERITE_AXE
+  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ᴀxᴇ"
+  lore:
+    - "&7Breaks Tress Instantly"
+
+  enchants:
+    - "SILK_TOUCH:1"
+    - "MENDING:1"
+    - "UNBREAKING:3"
+    - "EFFICIENCY:5"

@@ -1,0 +1,10 @@
+item:
+  material: NETHERITE_PICKAXE
+  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ᴅʀɪʟʟ"
+  lore:
+    - "&7Breaks 9 Blocks at Once"
+
+  enchants:
+    - "MENDING:1"
+    - "UNBREAKING:3"
+    - "EFFICIENCY:5"

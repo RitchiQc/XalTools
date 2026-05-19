@@ -1,0 +1,21 @@
+name: MythicTools
+version: '${version}'
+main: me.serbob.mythictools.MythicTools
+api-version: '1.13'
+folia-supported: true
+softdepend:
+  - "WorldGuard"
+  - "Lands"
+  - "DonutWorth"
+  - "EconomyShopGUI"
+  - "EconomyShopGUI-Premium"
+  - "ShopGUIPlus"
+  - "PrimeSeller"
+
+commands:
+  mythictools:
+    description: kool plg
+
+permissions:
+  mythictools.admin:
+    default: op

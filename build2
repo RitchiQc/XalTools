@@ -1,0 +1,87 @@
+plugins {
+    id("io.github.goooler.shadow") version "8.1.7"
+}
+
+allprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+
+        maven { url = "https://repo.papermc.io/repository/maven-public/" }
+        maven { url = 'https://jitpack.io' }
+        maven { url = "https://repo.tcoded.com/releases" }
+    }
+
+    dependencies {
+        compileOnly(rootProject.libs.paper.api)
+
+        implementation(rootProject.libs.nbtapi)
+        implementation(rootProject.libs.folialib)
+
+        compileOnly(rootProject.libs.lombok)
+        annotationProcessor(rootProject.libs.lombok)
+    }
+}
+
+subprojects {
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
+            if (project.name in ['v1_16_5']) {
+                languageVersion.set(JavaLanguageVersion.of(16))
+            } else if (project.name in ['hooks_java17']) {
+                languageVersion.set(JavaLanguageVersion.of(17))
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+}
+
+configure(subprojects.findAll { !(it.name in ['commons']) }) {
+    dependencies {
+        implementation project(':commons')
+    }
+}
+
+configure(subprojects.findAll { !(it.name in ['commons', 'api']) }) {
+    dependencies {
+        implementation project(':api')
+    }
+}
+
+dependencies {
+    implementation project(":api")
+    implementation project(":commons")
+
+    implementation project(":hooks_java17")
+
+    compileOnly(libs.vaultapi)
+    compileOnly(libs.shopgui.api)
+    compileOnly(libs.landsapi)
+
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+shadowJar {
+    mergeServiceFiles()
+
+    relocate ("com.tcoded.folialib", "me.serbob.mythictools.libs.folialib")
+
+    relocate("de.tr7zw.changeme.nbtapi", "me.serbob.mythictools.libs.nbt")
+
+    archiveClassifier.set(null)
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}

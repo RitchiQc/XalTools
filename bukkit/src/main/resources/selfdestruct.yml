@@ -1,0 +1,14 @@
+# Timer update frequency in ticks (20 ticks = 1 second)
+timer_update_frequency: 1200
+
+# Item lore formatting
+lore:
+  self_destruct_prefix: "&8Self Destruct: "
+  timer_prefix: "&8"
+
+# Time format in lore
+time_format:
+  days_format: "%dd "
+  hours_format: "%dh "
+  minutes_format: "%dm"
+  empty_format: "Broken"

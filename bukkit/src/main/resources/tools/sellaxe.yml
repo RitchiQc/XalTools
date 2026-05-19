@@ -1,0 +1,11 @@
+item:
+  material: NETHERITE_AXE
+  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ sᴇʟʟ ᴀxᴇ"
+  lore:
+    - "&7Instantly Sells All Items in A Chest"
+
+  enchants:
+    - "SILK_TOUCH:1"
+    - "MENDING:1"
+    - "UNBREAKING:3"
+    - "EFFICIENCY:5"

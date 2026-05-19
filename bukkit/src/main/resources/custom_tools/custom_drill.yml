@@ -1,0 +1,22 @@
+item:
+  material: NETHERITE_PICKAXE
+  name: "#A303F9ᴄᴜsᴛᴏᴍ ᴀᴍᴇᴛʜʏsᴛ ᴛᴏᴏʟ"
+  lore:
+    - "&7Breaks 9 Blocks at Once"
+    - "&7This is a custom tool btw!"
+
+  enchants:
+    - "MENDING:1"
+    - "UNBREAKING:3"
+    - "EFFICIENCY:5"
+
+# Available abilities:
+# - amethyst_bucket
+# - drill_pickaxe
+# - amethyst_multitool
+# - sell_axe
+# - amethyst_shovel
+# - amethyst_axe
+# - infinite_firework
+abilities:
+  - "drill_pickaxe"

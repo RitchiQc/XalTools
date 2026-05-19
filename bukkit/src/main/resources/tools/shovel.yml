@@ -1,0 +1,10 @@
+item:
+  material: NETHERITE_SHOVEL
+  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ sʜᴏᴠᴇʟ"
+  lore:
+    - "&79 Blocks Per Break"
+
+  enchants:
+    - "MENDING:1"
+    - "UNBREAKING:3"
+    - "EFFICIENCY:5"

@@ -1,0 +1,32 @@
+[versions]
+# minecraft related
+paper-api = "1.16.5-R0.1-SNAPSHOT"
+
+# useful
+lombok = "1.18.42"
+folialib = "0.5.1"
+
+# plugins
+nbtapi = "2.15.3"
+vaultapi = "1.7"
+shopgui-api = "3.0.0"
+landsapi = "7.24.1"
+worldguard = "7.0.8"
+
+[libraries]
+# minecraft related
+paper-api = { group = "com.destroystokyo.paper", name = "paper-api", version.ref = "paper-api" }
+
+# useful
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+folialib = { group = "com.tcoded", name = "FoliaLib", version.ref = "folialib" }
+
+# plugins
+nbtapi = { group = "de.tr7zw", name = "item-nbt-api", version.ref = "nbtapi" }
+vaultapi = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vaultapi" }
+shopgui-api = { group = "com.github.brcdev-minecraft", name = "shopgui-api", version.ref = "shopgui-api" }
+landsapi = { group = "com.github.angeschossen", name = "LandsAPI", version.ref = "landsapi" }
+worldguard = { group = "com.sk89q.worldguard", name = "worldguard-bukkit", version.ref = "worldguard" }
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version = "9.3.0" }

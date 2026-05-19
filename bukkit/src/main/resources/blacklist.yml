@@ -1,0 +1,8 @@
+# Blacklist worlds where the tools won't function at all
+worlds:
+  - "spawn"
+
+# Blacklist blocks that can't be broken with the tools
+blocks:
+  - "BEDROCK"
+  - "BARRIER"
