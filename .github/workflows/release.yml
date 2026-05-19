@@ -19,14 +19,12 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
+          cache: 'maven'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build with Gradle
-        run: ./gradlew shadowJar
+      - name: Build with Maven
+        run: mvn clean package
 
       - name: Get version from tag
         id: get_version
@@ -35,10 +33,7 @@ jobs:
       - name: Find built JAR
         id: find_jar
         run: |
-          JAR_PATH=$(find build/libs -name "*.jar" -not -name "*unobf*" | head -n 1)
-          if [ -z "$JAR_PATH" ]; then
-            JAR_PATH=$(find build/libs -name "*unobf*.jar" | head -n 1)
-          fi
+          JAR_PATH=$(find dist/target -name "MythicTools-*.jar" -not -name "original-*" | head -n 1)
           echo "JAR_PATH=$JAR_PATH" >> $GITHUB_OUTPUT
           echo "JAR_NAME=$(basename $JAR_PATH)" >> $GITHUB_OUTPUT
 
