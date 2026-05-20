@@ -110,8 +110,9 @@ public class PotionEffectAbility extends AbstractAbility {
         UUID playerId = player.getUniqueId();
         boolean hasEffectNow = hasAbilityEquipped(player);
         boolean hadEffect = activeEffects.getOrDefault(playerId, false);
+        boolean hasActualPotion = player.hasPotionEffect(effectType);
 
-        if (hasEffectNow && !hadEffect) {
+        if (hasEffectNow && (!hadEffect || !hasActualPotion)) {
             applyPotionEffect(player);
             activeEffects.put(playerId, true);
         } else if (!hasEffectNow && hadEffect) {
