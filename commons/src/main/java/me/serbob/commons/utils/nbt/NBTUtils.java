@@ -61,4 +61,14 @@ public class NBTUtils {
             nbt.removeKey(SECONDS_KEY);
         });
     }
+
+    public int getInt(ItemStack item, String key) {
+        return NBT.readNbt(item).getInteger(key);
+    }
+
+    public void setInt(ItemStack item, String key, int value) {
+        NBT.modify(item, nbt -> {
+            nbt.setInteger(key, value);
+        });
+    }
 }

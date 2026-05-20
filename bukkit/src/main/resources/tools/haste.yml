@@ -1,0 +1,16 @@
+item:
+  material: NETHERITE_PICKAXE
+  name: '#A303F9ᴄᴜsᴛᴏᴍ ᴀᴍᴇᴛʜʏsᴛ ᴛᴏᴏʟ'
+  lore:
+  - '&6Haste 3'
+  - ''
+
+  enchants:
+  - "MENDING:1"
+  - "UNBREAKING:3"
+  - "EFFICIENCY:5"
+
+abilities:
+- haste
+
+potion_amplifier: 3

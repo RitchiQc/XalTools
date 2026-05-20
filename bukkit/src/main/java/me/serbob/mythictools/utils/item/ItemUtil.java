@@ -54,6 +54,12 @@ public class ItemUtil {
             NBTUtils.getInstance().modifyNbt(item, ability1.getNbt());
         }
 
+        // Write potion amplifier if specified
+        int potionAmplifier = config.getInt("potion_amplifier", -1);
+        if (potionAmplifier >= 0) {
+            NBTUtils.getInstance().setInt(item, "potion_amplifier", potionAmplifier);
+        }
+
         return item;
     }
 

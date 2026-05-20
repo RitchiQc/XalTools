@@ -100,11 +100,15 @@ public class CustomAbility extends AbstractAbility {
         if (!type.isPotionEffect())
             return;
 
+        if (slot != EquipmentSlot.HAND)
+            return;
+
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
         boolean hadEffect = activeEffects.getOrDefault(playerId, false);
-        boolean hasEffectNow = hasAbilityEquipped(player);
+        ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
+        boolean hasEffectNow = hasAbility(newItem);
 
         if (hasEffectNow && !hadEffect) {
             applyPotionEffect(player);

@@ -1,0 +1,205 @@
+package me.serbob.mythictools.abilities.impl;
+
+import me.serbob.commons.Commons;
+import me.serbob.commons.utils.nbt.NBTUtils;
+import me.serbob.mythictools.abilities.AbstractAbility;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+public class PotionEffectAbility extends AbstractAbility {
+    private static final String AMPLIFIER_KEY = "potion_amplifier";
+    private static final int DEFAULT_DURATION = 200;
+
+    private final PotionEffectType effectType;
+    private final EquipmentSlot slot;
+    private final Map<UUID, Boolean> activeEffects = new HashMap<>();
+
+    public enum EquipmentSlot {
+        HAND, FEET, LEGS, CHEST, HEAD, ANY_ARMOR
+    }
+
+    public PotionEffectAbility(String nbt, PotionEffectType effectType, EquipmentSlot slot) {
+        super(nbt);
+        this.effectType = effectType;
+        this.slot = slot;
+        startEffectChecker();
+    }
+
+    public boolean hasAbilityEquipped(Player player) {
+        switch (slot) {
+            case HAND:
+                return hasAbility(player.getInventory().getItemInMainHand());
+            case FEET:
+                return hasAbility(player.getInventory().getBoots());
+            case LEGS:
+                return hasAbility(player.getInventory().getLeggings());
+            case CHEST:
+                return hasAbility(player.getInventory().getChestplate());
+            case HEAD:
+                return hasAbility(player.getInventory().getHelmet());
+            case ANY_ARMOR:
+                return hasAbility(player.getInventory().getBoots())
+                        || hasAbility(player.getInventory().getLeggings())
+                        || hasAbility(player.getInventory().getChestplate())
+                        || hasAbility(player.getInventory().getHelmet());
+            default:
+                return false;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+        if (slot != EquipmentSlot.HAND)
+            return;
+
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+
+        ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
+        boolean hasEffectNow = hasAbility(newItem);
+        boolean hadEffect = activeEffects.getOrDefault(playerId, false);
+
+        if (hasEffectNow && !hadEffect) {
+            applyPotionEffect(player);
+            activeEffects.put(playerId, true);
+        } else if (!hasEffectNow && hadEffect) {
+            removePotionEffect(player);
+            activeEffects.put(playerId, false);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
+
+        if (slot == EquipmentSlot.HAND)
+            return;
+
+        // Only process armor slots
+        if (event.getSlotType() != InventoryType.SlotType.ARMOR &&
+            event.getRawSlot() < 5 || event.getRawSlot() > 8) {
+            // Also check shift-clicks that might equip armor
+            if (event.getCurrentItem() == null || event.getCurrentItem().getType().isAir())
+                return;
+        }
+
+        Player player = (Player) event.getWhoClicked();
+
+        // Run check next tick to let the inventory update
+        Commons.getFoliaLib().getScheduler().runLater(() -> {
+            checkAndApplyEffect(player);
+        }, 1L);
+    }
+
+    public void checkAndApplyEffect(Player player) {
+        UUID playerId = player.getUniqueId();
+        boolean hasEffectNow = hasAbilityEquipped(player);
+        boolean hadEffect = activeEffects.getOrDefault(playerId, false);
+
+        if (hasEffectNow && !hadEffect) {
+            applyPotionEffect(player);
+            activeEffects.put(playerId, true);
+        } else if (!hasEffectNow && hadEffect) {
+            removePotionEffect(player);
+            activeEffects.put(playerId, false);
+        }
+    }
+
+    private void applyPotionEffect(Player player) {
+        if (effectType == null) return;
+
+        int amplifier = getAmplifier(player);
+
+        PotionEffect effect = new PotionEffect(
+                effectType,
+                DEFAULT_DURATION,
+                amplifier,
+                false,
+                true,
+                true
+        );
+        player.addPotionEffect(effect);
+    }
+
+    private void removePotionEffect(Player player) {
+        if (effectType == null) return;
+
+        player.removePotionEffect(effectType);
+    }
+
+    private int getAmplifier(Player player) {
+        ItemStack equippedItem = getEquippedItem(player);
+        if (equippedItem == null) return 0;
+
+        if (NBTUtils.getInstance().hasTag(equippedItem, AMPLIFIER_KEY)) {
+            return NBTUtils.getInstance().getInt(equippedItem, AMPLIFIER_KEY);
+        }
+
+        return 0;
+    }
+
+    private ItemStack getEquippedItem(Player player) {
+        switch (slot) {
+            case HAND:
+                return player.getInventory().getItemInMainHand();
+            case FEET:
+                return player.getInventory().getBoots();
+            case LEGS:
+                return player.getInventory().getLeggings();
+            case CHEST:
+                return player.getInventory().getChestplate();
+            case HEAD:
+                return player.getInventory().getHelmet();
+            case ANY_ARMOR:
+                ItemStack boots = player.getInventory().getBoots();
+                if (hasAbility(boots)) return boots;
+                ItemStack leggings = player.getInventory().getLeggings();
+                if (hasAbility(leggings)) return leggings;
+                ItemStack chestplate = player.getInventory().getChestplate();
+                if (hasAbility(chestplate)) return chestplate;
+                ItemStack helmet = player.getInventory().getHelmet();
+                if (hasAbility(helmet)) return helmet;
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    private void startEffectChecker() {
+        Commons.getFoliaLib().getScheduler().runTimerAsync(task -> {
+            for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
+                checkAndApplyEffect(player);
+            }
+        }, 20L, 20L);
+    }
+
+    @Override
+    public void onBlockBreak(Player player, BlockBreakEvent event, ItemStack tool) {
+        // Potion effect abilities don't handle block break
+    }
+
+    @Override
+    public void onInteract(Player player, PlayerInteractEvent event, ItemStack tool) {
+        // Potion effect abilities don't handle interact
+    }
+
+    @Override
+    public void onBucketFill(Player player, PlayerBucketFillEvent event, ItemStack tool) {
+        // Potion effect abilities don't handle bucket fill
+    }
+}
