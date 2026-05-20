@@ -72,7 +72,7 @@ public class PotionEffectAbility extends AbstractAbility {
         Player player = event.getPlayer();
 
         // Always check the current state after the slot change
-        Commons.getFoliaLib().getScheduler().runLater(() -> {
+        Commons.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             checkAndApplyEffect(player);
         }, 1L);
     }
@@ -85,7 +85,7 @@ public class PotionEffectAbility extends AbstractAbility {
         Player player = event.getPlayer();
         
         // Check after the drop is processed
-        Commons.getFoliaLib().getScheduler().runLater(() -> {
+        Commons.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             checkAndApplyEffect(player);
         }, 1L);
     }
@@ -137,7 +137,7 @@ public class PotionEffectAbility extends AbstractAbility {
         Player player = (Player) event.getWhoClicked();
 
         // Run check next tick to let the inventory update
-        Commons.getFoliaLib().getScheduler().runLater(() -> {
+        Commons.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             checkAndApplyEffect(player);
         }, 1L);
     }
@@ -163,7 +163,7 @@ public class PotionEffectAbility extends AbstractAbility {
             return;
 
         // Run check next tick to let the armor equip
-        Commons.getFoliaLib().getScheduler().runLater(() -> {
+        Commons.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             checkAndApplyEffect(player);
         }, 1L);
     }
@@ -176,7 +176,7 @@ public class PotionEffectAbility extends AbstractAbility {
         activeEffects.put(player.getUniqueId(), false);
         
         // Check and apply effect
-        Commons.getFoliaLib().getScheduler().runLater(() -> {
+        Commons.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             checkAndApplyEffect(player);
         }, 5L);
     }
@@ -271,10 +271,12 @@ public class PotionEffectAbility extends AbstractAbility {
     }
 
     private void startEffectChecker() {
-        // Use runTimer (sync) instead of runTimerAsync because addPotionEffect must be on main thread
+        // Use global timer but delegate to each player's regional thread for Folia compatibility
         Commons.getFoliaLib().getScheduler().runTimer(task -> {
             for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
-                checkAndApplyEffect(player);
+                Commons.getFoliaLib().getScheduler().runAtEntity(player, entityTask -> {
+                    checkAndApplyEffect(player);
+                });
             }
         }, 10L, 10L); // Check every 0.5 seconds
     }
