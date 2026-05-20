@@ -114,15 +114,6 @@ Create YAML files in the `custom_abilities/` folder. Available types:
 | `HASTE` | Haste potion effect | Any armor |
 | `INVISIBILITY` | Invisibility potion effect | Any armor |
 
-#### Custom Ability Example (`custom_abilities/no_fall.yml`)
-
-```yaml
-name: "No Fall Damage"
-nbt: "no_fall_damage"
-type: "NO_FALL_DAMAGE"
-slot: "FEET"
-```
-
 #### Equipment Slots
 
 - `HAND` — Must be held in main hand
