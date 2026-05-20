@@ -63,6 +63,38 @@ dist/target/MythicTools-<version>.jar
 | Amethyst Shovel | `amethyst_shovel` | Breaks 9 blocks at once (3x3) |
 | Amethyst Axe | `amethyst_axe` | Chops entire trees at once |
 | Infinite Firework | `infinite_firework` | Infinite elytra boost fireworks |
+| Haste | `haste` | Haste potion effect (configurable amplifier) |
+| Speed | `speed` | Speed potion effect (configurable amplifier) |
+| Fire Resistance | `fire_resistance` | Fire resistance potion effect |
+| Jump Boost | `jump_boost` | Jump boost potion effect |
+| Night Vision | `night_vision` | Night vision potion effect |
+| Water Breathing | `water_breathing` | Water breathing potion effect |
+| Regeneration | `regeneration` | Regeneration potion effect |
+| Strength | `strength` | Strength potion effect |
+| Invisibility | `invisibility` | Invisibility potion effect |
+
+### Potion Effect Amplifier
+
+For hardcoded potion effect abilities (Haste, Speed, etc.), the amplifier is configured directly on the item via `potion_amplifier` in the tool's YAML file:
+
+```yaml
+item:
+  material: NETHERITE_PICKAXE
+  name: '#A303F9ᴄᴜsᴛᴏᴍ ᴀᴍᴇᴛʜʏsᴛ ᴛᴏᴏʟ'
+  lore:
+  - '&6Haste 3'
+  enchants:
+  - "MENDING:1"
+  - "UNBREAKING:3"
+  - "EFFICIENCY:5"
+
+abilities:
+- haste
+
+potion_amplifier: 3  # Effect level (0 = I, 1 = II, 2 = III, etc.)
+```
+
+The `potion_amplifier` value is stored in the item's NBT and read dynamically when the effect is applied.
 
 ### Custom Abilities (create your own!)
 
