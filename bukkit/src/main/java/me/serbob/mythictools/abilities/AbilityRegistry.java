@@ -2,8 +2,6 @@ package me.serbob.mythictools.abilities;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import me.serbob.mythictools.abilities.custom.CustomAbility;
-import me.serbob.mythictools.abilities.custom.CustomAbilityManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +19,7 @@ public class AbilityRegistry {
     }
 
     public AbstractAbility getByNbt(String nbt) {
-        // Check hardcoded abilities first
-        AbstractAbility ability = Abilities.getByNbt(nbt);
-        if (ability != null) {
-            return ability;
-        }
-
-        // Check custom abilities
-        return CustomAbilityManager.getInstance().getByNbt(nbt);
+        return Abilities.getByNbt(nbt);
     }
 
     public List<AbstractAbility> getAllAbilities() {
@@ -38,8 +29,6 @@ public class AbilityRegistry {
             all.add(ability.getAbility());
         }
 
-        all.addAll(CustomAbilityManager.getInstance().getAllAbilities());
-
         return all;
     }
 
@@ -48,10 +37,6 @@ public class AbilityRegistry {
 
         for (Abilities ability : Abilities.values()) {
             tags.add(ability.getAbility().getNbt());
-        }
-
-        for (CustomAbility ability : CustomAbilityManager.getInstance().getAllAbilities()) {
-            tags.add(ability.getNbt());
         }
 
         return tags;
