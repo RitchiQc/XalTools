@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public class PotionEffectAbility extends AbstractAbility {
     private static final String AMPLIFIER_KEY = "potion_amplifier";
-    private static final int DEFAULT_DURATION = 400; // 20 seconds, refreshed every 1 second
+    private static final int DEFAULT_DURATION = 100; // 5 seconds, refreshed every 0.5 second
 
     private final PotionEffectType effectType;
     private final EquipmentSlot slot;
@@ -70,7 +70,6 @@ public class PotionEffectAbility extends AbstractAbility {
             return;
 
         Player player = event.getPlayer();
-        UUID playerId = player.getUniqueId();
 
         // Always check the current state after the slot change
         Commons.getFoliaLib().getScheduler().runLater(() -> {
@@ -96,33 +95,43 @@ public class PotionEffectAbility extends AbstractAbility {
         if (!(event.getWhoClicked() instanceof Player))
             return;
 
-        if (slot == EquipmentSlot.HAND)
-            return;
+        boolean couldAffectSlot = false;
+        
+        if (slot == EquipmentSlot.HAND) {
+            // Check if click affects hotbar (slots 36-44 in player inventory)
+            // or if player clicked in their own inventory to move item to hotbar
+            if (event.getSlotType() == InventoryType.SlotType.QUICKBAR) {
+                couldAffectSlot = true;
+            }
+            // Shift-click that might move item to hotbar
+            if (event.isShiftClick() && event.getCurrentItem() != null && !event.getCurrentItem().getType().isAir()) {
+                couldAffectSlot = true;
+            }
+            // Hotbar swap (number keys)
+            if (event.getHotbarButton() >= 0) {
+                couldAffectSlot = true;
+            }
+            // Click in hotbar range (raw slots 36-44 in player inventory)
+            if (event.getRawSlot() >= 36 && event.getRawSlot() <= 44) {
+                couldAffectSlot = true;
+            }
+        } else {
+            // Armor slot logic
+            if (event.getSlotType() == InventoryType.SlotType.ARMOR) {
+                couldAffectSlot = true;
+            }
+            if (event.isShiftClick() && event.getCurrentItem() != null && !event.getCurrentItem().getType().isAir()) {
+                couldAffectSlot = true;
+            }
+            if (event.getHotbarButton() >= 0 && event.getSlotType() == InventoryType.SlotType.ARMOR) {
+                couldAffectSlot = true;
+            }
+            if (event.getRawSlot() >= 5 && event.getRawSlot() <= 8) {
+                couldAffectSlot = true;
+            }
+        }
 
-        // Check if this could affect armor slots
-        boolean couldAffectArmor = false;
-        
-        // Direct armor slot click
-        if (event.getSlotType() == InventoryType.SlotType.ARMOR) {
-            couldAffectArmor = true;
-        }
-        
-        // Shift-click that might equip armor
-        if (event.isShiftClick() && event.getCurrentItem() != null && !event.getCurrentItem().getType().isAir()) {
-            couldAffectArmor = true;
-        }
-        
-        // Hotbar swap (number keys) to armor slot
-        if (event.getHotbarButton() >= 0 && event.getSlotType() == InventoryType.SlotType.ARMOR) {
-            couldAffectArmor = true;
-        }
-        
-        // Click in armor slots range (raw slots 5-8 in player inventory)
-        if (event.getRawSlot() >= 5 && event.getRawSlot() <= 8) {
-            couldAffectArmor = true;
-        }
-
-        if (!couldAffectArmor)
+        if (!couldAffectSlot)
             return;
 
         Player player = (Player) event.getWhoClicked();
@@ -148,7 +157,7 @@ public class PotionEffectAbility extends AbstractAbility {
         // Only check if the item could be armor
         String typeName = item.getType().name();
         boolean isArmor = typeName.endsWith("_HELMET") || typeName.endsWith("_CHESTPLATE") 
-                || typeName.endsWith("_LEGGINGS") || typeName.endsWith("_BOOTS");
+                || typeName.endsWith("LEGGINGS") || typeName.endsWith("_BOOTS");
         
         if (!isArmor)
             return;
@@ -262,11 +271,12 @@ public class PotionEffectAbility extends AbstractAbility {
     }
 
     private void startEffectChecker() {
-        Commons.getFoliaLib().getScheduler().runTimerAsync(task -> {
+        // Use runTimer (sync) instead of runTimerAsync because addPotionEffect must be on main thread
+        Commons.getFoliaLib().getScheduler().runTimer(task -> {
             for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
                 checkAndApplyEffect(player);
             }
-        }, 20L, 20L);
+        }, 10L, 10L); // Check every 0.5 seconds
     }
 
     @Override
