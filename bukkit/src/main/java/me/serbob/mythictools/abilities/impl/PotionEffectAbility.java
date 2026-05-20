@@ -12,6 +12,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -22,7 +25,7 @@ import java.util.UUID;
 
 public class PotionEffectAbility extends AbstractAbility {
     private static final String AMPLIFIER_KEY = "potion_amplifier";
-    private static final int DEFAULT_DURATION = 200;
+    private static final int DEFAULT_DURATION = 400; // 20 seconds, refreshed every 1 second
 
     private final PotionEffectType effectType;
     private final EquipmentSlot slot;
@@ -69,17 +72,23 @@ public class PotionEffectAbility extends AbstractAbility {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
-        ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
-        boolean hasEffectNow = hasAbility(newItem);
-        boolean hadEffect = activeEffects.getOrDefault(playerId, false);
+        // Always check the current state after the slot change
+        Commons.getFoliaLib().getScheduler().runLater(() -> {
+            checkAndApplyEffect(player);
+        }, 1L);
+    }
 
-        if (hasEffectNow && !hadEffect) {
-            applyPotionEffect(player);
-            activeEffects.put(playerId, true);
-        } else if (!hasEffectNow && hadEffect) {
-            removePotionEffect(player);
-            activeEffects.put(playerId, false);
-        }
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        if (slot != EquipmentSlot.HAND)
+            return;
+
+        Player player = event.getPlayer();
+        
+        // Check after the drop is processed
+        Commons.getFoliaLib().getScheduler().runLater(() -> {
+            checkAndApplyEffect(player);
+        }, 1L);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -90,13 +99,31 @@ public class PotionEffectAbility extends AbstractAbility {
         if (slot == EquipmentSlot.HAND)
             return;
 
-        // Only process armor slots
-        if (event.getSlotType() != InventoryType.SlotType.ARMOR &&
-            event.getRawSlot() < 5 || event.getRawSlot() > 8) {
-            // Also check shift-clicks that might equip armor
-            if (event.getCurrentItem() == null || event.getCurrentItem().getType().isAir())
-                return;
+        // Check if this could affect armor slots
+        boolean couldAffectArmor = false;
+        
+        // Direct armor slot click
+        if (event.getSlotType() == InventoryType.SlotType.ARMOR) {
+            couldAffectArmor = true;
         }
+        
+        // Shift-click that might equip armor
+        if (event.isShiftClick() && event.getCurrentItem() != null && !event.getCurrentItem().getType().isAir()) {
+            couldAffectArmor = true;
+        }
+        
+        // Hotbar swap (number keys) to armor slot
+        if (event.getHotbarButton() >= 0 && event.getSlotType() == InventoryType.SlotType.ARMOR) {
+            couldAffectArmor = true;
+        }
+        
+        // Click in armor slots range (raw slots 5-8 in player inventory)
+        if (event.getRawSlot() >= 5 && event.getRawSlot() <= 8) {
+            couldAffectArmor = true;
+        }
+
+        if (!couldAffectArmor)
+            return;
 
         Player player = (Player) event.getWhoClicked();
 
@@ -106,16 +133,69 @@ public class PotionEffectAbility extends AbstractAbility {
         }, 1L);
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (slot == EquipmentSlot.HAND)
+            return;
+
+        // Check if player right-clicked to equip armor
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+        
+        if (item == null || item.getType().isAir())
+            return;
+
+        // Only check if the item could be armor
+        String typeName = item.getType().name();
+        boolean isArmor = typeName.endsWith("_HELMET") || typeName.endsWith("_CHESTPLATE") 
+                || typeName.endsWith("_LEGGINGS") || typeName.endsWith("_BOOTS");
+        
+        if (!isArmor)
+            return;
+
+        // Run check next tick to let the armor equip
+        Commons.getFoliaLib().getScheduler().runLater(() -> {
+            checkAndApplyEffect(player);
+        }, 1L);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        
+        // Reset the state so the effect gets applied on join
+        activeEffects.put(player.getUniqueId(), false);
+        
+        // Check and apply effect
+        Commons.getFoliaLib().getScheduler().runLater(() -> {
+            checkAndApplyEffect(player);
+        }, 5L);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+        
+        // Remove the effect when player quits
+        if (activeEffects.getOrDefault(playerId, false)) {
+            removePotionEffect(player);
+        }
+        
+        // Clean up the map
+        activeEffects.remove(playerId);
+    }
+
     public void checkAndApplyEffect(Player player) {
         UUID playerId = player.getUniqueId();
         boolean hasEffectNow = hasAbilityEquipped(player);
         boolean hadEffect = activeEffects.getOrDefault(playerId, false);
-        boolean hasActualPotion = player.hasPotionEffect(effectType);
 
-        if (hasEffectNow && (!hadEffect || !hasActualPotion)) {
+        if (hasEffectNow) {
+            // Always reapply to refresh duration, even if already had effect
             applyPotionEffect(player);
             activeEffects.put(playerId, true);
-        } else if (!hasEffectNow && hadEffect) {
+        } else if (hadEffect) {
             removePotionEffect(player);
             activeEffects.put(playerId, false);
         }
@@ -134,7 +214,7 @@ public class PotionEffectAbility extends AbstractAbility {
                 true,
                 true
         );
-        player.addPotionEffect(effect);
+        player.addPotionEffect(effect, true); // true = force overwrite existing effect
     }
 
     private void removePotionEffect(Player player) {
