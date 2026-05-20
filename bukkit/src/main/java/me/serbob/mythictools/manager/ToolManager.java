@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.serbob.mythictools.tools.AbstractTool;
 import me.serbob.mythictools.tools.Tools;
 
 import java.util.HashMap;
