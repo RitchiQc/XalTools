@@ -1,9 +1,0 @@
-# Custom Ability: Speed Boots
-# This ability gives speed effect when equipped on boots
-
-name: "Speed Boots"
-nbt: "speed_boots"
-type: "SPEED"
-slot: "FEET"
-potion-duration: 200
-potion-amplifier: 1

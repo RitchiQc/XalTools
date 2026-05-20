@@ -63,6 +63,7 @@ dist/target/MythicTools-<version>.jar
 | Amethyst Shovel | `amethyst_shovel` | Breaks 9 blocks at once (3x3) |
 | Amethyst Axe | `amethyst_axe` | Chops entire trees at once |
 | Infinite Firework | `infinite_firework` | Infinite elytra boost fireworks |
+| No Fall Damage | `no_fall_damage` | Prevents fall damage when equipped |
 | Haste | `haste` | Haste potion effect (configurable amplifier) |
 | Speed | `speed` | Speed potion effect (configurable amplifier) |
 | Fire Resistance | `fire_resistance` | Fire resistance potion effect |
@@ -120,17 +121,6 @@ name: "No Fall Damage"
 nbt: "no_fall_damage"
 type: "NO_FALL_DAMAGE"
 slot: "FEET"
-```
-
-#### Custom Ability with Potion Effect (`custom_abilities/speed_boots.yml`)
-
-```yaml
-name: "Speed Boots"
-nbt: "speed_boots"
-type: "SPEED"
-slot: "FEET"
-potion-duration: 200    # Ticks (10 seconds)
-potion-amplifier: 1     # Effect level (0 = I, 1 = II, etc.)
 ```
 
 #### Equipment Slots

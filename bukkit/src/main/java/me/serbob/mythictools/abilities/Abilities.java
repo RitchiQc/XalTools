@@ -14,6 +14,7 @@ public enum Abilities {
     MULTI_TOOL(new MultiToolAbility()),
     SHOVEL_3X3(new Shovel3x3Ability()),
     INFINITEFIREWORK(new InfiniteFireworkAbility()),
+    NO_FALL_DAMAGE(new NoFallDamageAbility("no_fall_damage", NoFallDamageAbility.EquipmentSlot.FEET)),
 
     // Potion effect abilities
     HASTE(new PotionEffectAbility("haste", PotionEffectType.HASTE, PotionEffectAbility.EquipmentSlot.HAND)),
