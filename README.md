@@ -97,23 +97,6 @@ potion_amplifier: 3  # Effect level (0 = I, 1 = II, 2 = III, etc.)
 
 The `potion_amplifier` value is stored in the item's NBT and read dynamically when the effect is applied.
 
-### Custom Abilities (create your own!)
-
-Create YAML files in the `custom_abilities/` folder. Available types:
-
-| Type | Description | Slot |
-|------|-------------|------|
-| `NO_FALL_DAMAGE` | Prevents fall damage | `FEET` (boots) |
-| `FIRE_RESISTANCE` | Fire resistance potion effect | Any armor |
-| `SPEED` | Speed potion effect | Any armor |
-| `JUMP_BOOST` | Jump boost potion effect | Any armor |
-| `NIGHT_VISION` | Night vision potion effect | Any armor |
-| `WATER_BREATHING` | Water breathing potion effect | Any armor |
-| `REGENERATION` | Regeneration potion effect | Any armor |
-| `STRENGTH` | Strength potion effect | Any armor |
-| `HASTE` | Haste potion effect | Any armor |
-| `INVISIBILITY` | Invisibility potion effect | Any armor |
-
 #### Equipment Slots
 
 - `HAND` — Must be held in main hand
