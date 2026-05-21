@@ -157,7 +157,7 @@ public class PotionEffectAbility extends AbstractAbility {
         // Only check if the item could be armor
         String typeName = item.getType().name();
         boolean isArmor = typeName.endsWith("_HELMET") || typeName.endsWith("_CHESTPLATE") 
-                || typeName.endsWith("LEGGINGS") || typeName.endsWith("_BOOTS");
+                || typeName.endsWith("_LEGGINGS") || typeName.endsWith("_BOOTS");
         
         if (!isArmor)
             return;

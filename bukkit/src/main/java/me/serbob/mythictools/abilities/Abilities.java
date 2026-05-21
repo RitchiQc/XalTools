@@ -18,7 +18,7 @@ public enum Abilities {
 
     // Potion effect abilities
     HASTE(new PotionEffectAbility("haste", PotionEffectType.HASTE, PotionEffectAbility.EquipmentSlot.HAND)),
-    SPEED(new PotionEffectAbility("speed", PotionEffectType.SPEED, PotionEffectAbility.EquipmentSlot.FEET)),
+    SPEED(new PotionEffectAbility("speed", PotionEffectType.SPEED, PotionEffectAbility.EquipmentSlot.ANY_ARMOR)),
     FIRE_RESISTANCE(new PotionEffectAbility("fire_resistance", PotionEffectType.FIRE_RESISTANCE, PotionEffectAbility.EquipmentSlot.CHEST)),
     JUMP_BOOST(new PotionEffectAbility("jump_boost", PotionEffectType.JUMP_BOOST, PotionEffectAbility.EquipmentSlot.LEGS)),
     NIGHT_VISION(new PotionEffectAbility("night_vision", PotionEffectType.NIGHT_VISION, PotionEffectAbility.EquipmentSlot.HEAD)),
