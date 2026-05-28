@@ -118,7 +118,7 @@ public enum Messages {
         for (Messages value : values()) {
             if (config.getConfig().get(value.path) == null) {
                 missingMessages++;
-                getLogger().info("[MythicTools] Adding missing message: " + value.path);
+                getLogger().info("[XalTools] Adding missing message: " + value.path);
 
                 if (value.messageList != null && value.messageList.size() > 1) {
                     config.getConfig().set(value.path, value.messageList);
@@ -144,9 +144,9 @@ public enum Messages {
         if (configChanged) {
             try {
                 config.saveConfig();
-                getLogger().info("[MythicTools] Added " + missingMessages + " missing messages to config.");
+                getLogger().info("[XalTools] Added " + missingMessages + " missing messages to config.");
             } catch (Exception e) {
-                getLogger().severe("[MythicTools] Failed to save config after adding missing messages: " + e.getMessage());
+                getLogger().severe("[XalTools] Failed to save config after adding missing messages: " + e.getMessage());
             }
         }
     }

@@ -6,17 +6,17 @@
 
     <parent>
         <groupId>me.serbob</groupId>
-        <artifactId>MythicTools-parent</artifactId>
+        <artifactId>XalTools-parent</artifactId>
         <version>1.5.1-rc-12</version>
     </parent>
 
-    <artifactId>MythicTools-api</artifactId>
-    <name>MythicTools API</name>
+    <artifactId>XalTools-api</artifactId>
+    <name>XalTools API</name>
 
     <dependencies>
         <dependency>
             <groupId>me.serbob</groupId>
-            <artifactId>MythicTools-commons</artifactId>
+            <artifactId>XalTools-commons</artifactId>
         </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>

@@ -33,7 +33,7 @@ jobs:
       - name: Find built JAR
         id: find_jar
         run: |
-          JAR_PATH=$(find dist/target -name "MythicTools-*.jar" -not -name "original-*" | head -n 1)
+          JAR_PATH=$(find dist/target -name "XalTools-*.jar" -not -name "original-*" | head -n 1)
           echo "JAR_PATH=$JAR_PATH" >> $GITHUB_OUTPUT
           echo "JAR_NAME=$(basename $JAR_PATH)" >> $GITHUB_OUTPUT
 

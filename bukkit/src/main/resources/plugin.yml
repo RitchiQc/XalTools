@@ -1,6 +1,6 @@
-name: MythicTools
+name: XalTools
 version: '${version}'
-main: me.serbob.mythictools.MythicTools
+main: me.serbob.xaltools.XalTools
 api-version: '1.13'
 folia-supported: true
 softdepend:
@@ -13,9 +13,9 @@ softdepend:
   - "PrimeSeller"
 
 commands:
-  mythictools:
+  xaltools:
     description: kool plg
 
 permissions:
-  mythictools.admin:
+  xaltools.admin:
     default: op

@@ -6,22 +6,22 @@
 
     <parent>
         <groupId>me.serbob</groupId>
-        <artifactId>MythicTools-parent</artifactId>
+        <artifactId>XalTools-parent</artifactId>
         <version>1.5.1-rc-12</version>
     </parent>
 
-    <artifactId>MythicTools-bukkit</artifactId>
-    <name>MythicTools Bukkit</name>
+    <artifactId>XalTools-bukkit</artifactId>
+    <name>XalTools Bukkit</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>me.serbob</groupId>
-            <artifactId>MythicTools-api</artifactId>
+            <artifactId>XalTools-api</artifactId>
         </dependency>
         <dependency>
             <groupId>me.serbob</groupId>
-            <artifactId>MythicTools-commons</artifactId>
+            <artifactId>XalTools-commons</artifactId>
         </dependency>
 
         <dependency>

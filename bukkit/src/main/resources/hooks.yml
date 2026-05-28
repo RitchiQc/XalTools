@@ -9,7 +9,7 @@
 #
 # Note: You can also create custom currency integrations using our API.
 # Tip for Developers: If you want to create a custom currency, do it inside the CurrencyRegistrationCompleteEvent
-#  -> Make sure you use CurrencyManager (to register it, no need to set it active as MythicTools will do it automatically)
+#  -> Make sure you use CurrencyManager (to register it, no need to set it active as XalTools will do it automatically)
 #
 currency: "Vault"
 
@@ -26,7 +26,7 @@ currency: "Vault"
 #
 # Note: You can also create custom shop integrations using our API.
 # Tip for Developers: If you want to create a custom shop, do it inside the ShopRegistrationCompleteEvent
-#  -> Make sure you use ShopManager (to register it, no need to set it active as MythicTools will do it automatically)
+#  -> Make sure you use ShopManager (to register it, no need to set it active as XalTools will do it automatically)
 #
 shop: "None"  # Set to "None" to disable shop integration
 

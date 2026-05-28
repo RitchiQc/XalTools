@@ -1,4 +1,4 @@
-# MythicTools
+# XalTools
 
 Advanced tools plugin for **Folia** and **Paper** Minecraft servers.
 
@@ -16,7 +16,7 @@ mvn clean package
 
 The final shaded JAR will be located at:
 ```
-dist/target/MythicTools-<version>.jar
+dist/target/XalTools-<version>.jar
 ```
 
 ## Project Structure

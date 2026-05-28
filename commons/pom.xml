@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>me.serbob</groupId>
-        <artifactId>MythicTools-parent</artifactId>
+        <artifactId>XalTools-parent</artifactId>
         <version>1.5.1-rc-12</version>
     </parent>
 
-    <artifactId>MythicTools-commons</artifactId>
-    <name>MythicTools Commons</name>
+    <artifactId>XalTools-commons</artifactId>
+    <name>XalTools Commons</name>
 
     <dependencies>
         <dependency>

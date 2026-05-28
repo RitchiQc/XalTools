@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.serbob</groupId>
-    <artifactId>MythicTools-parent</artifactId>
+    <artifactId>XalTools-parent</artifactId>
     <version>1.5.1-rc-12</version>
     <packaging>pom</packaging>
 
-    <name>MythicTools Parent</name>
-    <description>MythicTools - Advanced tools plugin for Folia/Paper</description>
+    <name>XalTools Parent</name>
+    <description>XalTools - Advanced tools plugin for Folia/Paper</description>
 
     <modules>
         <module>commons</module>
@@ -120,25 +120,25 @@
             <!-- Internal modules -->
             <dependency>
                 <groupId>me.serbob</groupId>
-                <artifactId>MythicTools-api</artifactId>
+                <artifactId>XalTools-api</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>me.serbob</groupId>
-                <artifactId>MythicTools-commons</artifactId>
+                <artifactId>XalTools-commons</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>me.serbob</groupId>
-                <artifactId>MythicTools-hooks_java17</artifactId>
+                <artifactId>XalTools-hooks_java17</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>me.serbob</groupId>
-                <artifactId>MythicTools-bukkit</artifactId>
+                <artifactId>XalTools-bukkit</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
             </dependency>

@@ -6,22 +6,22 @@
 
     <parent>
         <groupId>me.serbob</groupId>
-        <artifactId>MythicTools-parent</artifactId>
+        <artifactId>XalTools-parent</artifactId>
         <version>1.5.1-rc-12</version>
     </parent>
 
-    <artifactId>MythicTools</artifactId>
-    <name>MythicTools</name>
+    <artifactId>XalTools</artifactId>
+    <name>XalTools</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>me.serbob</groupId>
-            <artifactId>MythicTools-bukkit</artifactId>
+            <artifactId>XalTools-bukkit</artifactId>
         </dependency>
         <dependency>
             <groupId>me.serbob</groupId>
-            <artifactId>MythicTools-hooks_java17</artifactId>
+            <artifactId>XalTools-hooks_java17</artifactId>
         </dependency>
         <dependency>
             <groupId>de.tr7zw</groupId>
@@ -49,10 +49,10 @@
                             <minimizeJar>false</minimizeJar>
                             <artifactSet>
                                 <includes>
-                                    <include>me.serbob:MythicTools-bukkit</include>
-                                    <include>me.serbob:MythicTools-hooks_java17</include>
-                                    <include>me.serbob:MythicTools-api</include>
-                                    <include>me.serbob:MythicTools-commons</include>
+                                    <include>me.serbob:XalTools-bukkit</include>
+                                    <include>me.serbob:XalTools-hooks_java17</include>
+                                    <include>me.serbob:XalTools-api</include>
+                                    <include>me.serbob:XalTools-commons</include>
                                     <include>de.tr7zw:item-nbt-api</include>
                                     <include>com.tcoded:FoliaLib</include>
                                 </includes>
@@ -60,11 +60,11 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.tcoded.folialib</pattern>
-                                    <shadedPattern>me.serbob.mythictools.libs.folialib</shadedPattern>
+                                    <shadedPattern>me.serbob.xaltools.libs.folialib</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                                    <shadedPattern>me.serbob.mythictools.libs.nbt</shadedPattern>
+                                    <shadedPattern>me.serbob.xaltools.libs.nbt</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
