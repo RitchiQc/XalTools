@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import me.serbob.commons.enums.ConfigSelector;
-import me.serbob.commons.objectholders.MythicWorld;
+import me.serbob.commons.objectholders.XalWorld;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -21,7 +21,7 @@ public class BlacklistManager {
     @Getter(lazy = true)
     private static final BlacklistManager instance = new BlacklistManager();
 
-    Set<MythicWorld> blacklistedWorlds = new HashSet<>();
+    Set<XalWorld> blacklistedWorlds = new HashSet<>();
     Set<Material> blacklistedBlocks  = new HashSet<>();
 
     public void load() {
@@ -31,7 +31,7 @@ public class BlacklistManager {
         blacklistedBlocks.clear();
 
         config.getStringList("worlds").forEach(world -> {
-            blacklistedWorlds.add(new MythicWorld(world));
+            blacklistedWorlds.add(new XalWorld(world));
         });
 
         config.getStringList("blocks").forEach(material -> {
@@ -47,8 +47,8 @@ public class BlacklistManager {
     public boolean isBlacklistedWorld(World world) {
         boolean isBlacklisted = false;
 
-        for (MythicWorld mythicWorld : blacklistedWorlds) {
-            World parsedWorld = mythicWorld.adaptToWorld();
+        for (XalWorld xalWorld : blacklistedWorlds) {
+            World parsedWorld = xalWorld.adaptToWorld();
 
             if (parsedWorld == null)
                 continue;

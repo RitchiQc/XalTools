@@ -7,7 +7,7 @@ import org.bukkit.World;
 
 @Getter
 @AllArgsConstructor
-public class MythicWorld {
+public class XalWorld {
     private final String worldName;
 
     public World adaptToWorld() {

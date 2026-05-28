@@ -11,8 +11,8 @@ public class Commons {
     @Getter(lazy = true)
     private static final Commons instance = new Commons();
 
-    private static @Getter JavaPlugin pluginInstance;
-    private static @Getter FoliaLib foliaLib;
+    @Getter private static JavaPlugin pluginInstance;
+    @Getter private static FoliaLib foliaLib;
 
     public void load(
             JavaPlugin plugin
