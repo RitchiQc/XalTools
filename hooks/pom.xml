@@ -10,8 +10,8 @@
         <version>1.5.1-rc-12</version>
     </parent>
 
-    <artifactId>XalTools-hooks_java17</artifactId>
-    <name>XalTools Hooks (Java 17+)</name>
+    <artifactId>XalTools-hooks</artifactId>
+    <name>XalTools Hooks</name>
 
     <repositories>
         <repository>

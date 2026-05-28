@@ -10,7 +10,7 @@ import me.serbob.xaltools.hooks.permission.WorldGuardPermission;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HooksJava17 implements IHooksJava {
+public class Hooks implements IHooksJava {
 
     @Override
     public Map<String, Class<? extends PermissionHook>> getPermissionHooks() {

@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>me.serbob</groupId>
-            <artifactId>XalTools-hooks_java17</artifactId>
+            <artifactId>XalTools-hooks</artifactId>
         </dependency>
         <dependency>
             <groupId>de.tr7zw</groupId>
@@ -50,7 +50,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>me.serbob:XalTools-bukkit</include>
-                                    <include>me.serbob:XalTools-hooks_java17</include>
+                                    <include>me.serbob:XalTools-hooks</include>
                                     <include>me.serbob:XalTools-api</include>
                                     <include>me.serbob:XalTools-commons</include>
                                     <include>de.tr7zw:item-nbt-api</include>

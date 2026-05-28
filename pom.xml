@@ -16,7 +16,7 @@
         <module>commons</module>
         <module>api</module>
         <module>bukkit</module>
-        <module>hooks_java17</module>
+        <module>hooks</module>
         <module>dist</module>
     </modules>
 
@@ -132,7 +132,7 @@
             </dependency>
             <dependency>
                 <groupId>me.serbob</groupId>
-                <artifactId>XalTools-hooks_java17</artifactId>
+                <artifactId>XalTools-hooks</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
             </dependency>

@@ -26,7 +26,7 @@ dist/target/XalTools-<version>.jar
 | `commons` | Shared utilities and common code |
 | `api` | Public API for developers |
 | `bukkit` | Main Bukkit/Folia plugin module |
-| `hooks_java17` | Hooks for WorldGuard, Lands and other plugins |
+| `hooks` | Hooks for WorldGuard, Lands and other plugins |
 | `dist` | Assembly module (produces the final shaded JAR) |
 
 ## Dependencies
