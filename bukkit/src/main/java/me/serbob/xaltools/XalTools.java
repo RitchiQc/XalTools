@@ -45,16 +45,14 @@ public final class XalTools extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         log("\n\n" +
-                LIGHT_PURPLE + "  __  __       _   _     _      _____            _     \n" +
-                LIGHT_PURPLE + " |  \\/  |     | | | |   (_)    |_   _|          | |    \n" +
-                LIGHT_PURPLE + " | \\  / |_   _| |_| |__  _  ___  | |  ___   ___ | |___ " +
-                BOLD_WHITE + "    XalTools " + LIGHT_PURPLE + this.getDescription().getVersion() + "\n" +
-                LIGHT_PURPLE + " | |\\/| | | | | __| '_ \\| |/ __| | | / _ \\ / _ \\| / __|" +
-                GRAY + "    Supports Paper & Folia\n" +
-                LIGHT_PURPLE + " | |  | | |_| | |_| | | | | (__  | || (_) | (_) | \\__ \\\n" +
-                LIGHT_PURPLE + " |_|  |_|\\__, |\\__|_| |_|_|\\___| |_| \\___/ \\___/|_|___/\n" +
-                LIGHT_PURPLE + "          __/ |                                         \n" +
-                LIGHT_PURPLE + "         |___/                                          " + RESET + "\n"
+                LIGHT_PURPLE + " __   __    _ _______                 _      \n" +
+        LIGHT_PURPLE + " \\ \\ / /   | |__   __|               | |     \n" +
+        LIGHT_PURPLE + "  \\ V /__ _| |  | | ___   ___   ___  | |___  " + 
+        BOLD_WHITE + "    XalTools " + this.getDescription().getVersion() + "\n" +
+        LIGHT_PURPLE + "   > < / _` | |  | |/ _ \\ / _ \\ / _ \\ | / __| " + 
+        GRAY + "    Supports Paper & Folia\n" +
+        LIGHT_PURPLE + "  / . \\ (_| | |  | | (_) | (_) | (_) | \\__ \\\n" +
+        LIGHT_PURPLE + " /_/ \\_\\__,_|_|  |_|\\___/ \\___/ \\___/|_|___/\n" + RESET + "\n"
         );
 
         instance = this;
