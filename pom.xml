@@ -29,7 +29,7 @@
         <paper-api.version>1.21.4-R0.1-SNAPSHOT</paper-api.version>
         <lombok.version>1.18.42</lombok.version>
         <folialib.version>0.5.1</folialib.version>
-        <nbtapi.version>2.15.3</nbtapi.version>
+        <nbtapi.version>2.15.7</nbtapi.version>
         <vaultapi.version>1.7</vaultapi.version>
         <shopgui-api.version>3.0.0</shopgui-api.version>
         <landsapi.version>7.24.1</landsapi.version>
