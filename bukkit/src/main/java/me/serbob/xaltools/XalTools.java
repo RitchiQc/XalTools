@@ -45,9 +45,9 @@ public final class XalTools extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         log("\n\n" +
-                LIGHT_PURPLE + " __   __    _ _______                 _      \n" +
-        LIGHT_PURPLE + " \\ \\ / /   | |__   __|               | |     \n" +
-        LIGHT_PURPLE + "  \\ V /__ _| |  | | ___   ___   ___  | |___  " + 
+        LIGHT_PURPLE + " __   __     _ _______                 _      \n" +
+        LIGHT_PURPLE + " \\ \\ / /    | |__   __|               | |     \n" +
+        LIGHT_PURPLE + "  \\ V / __ _| |  | | ___   ___   ___  | |___  " + 
         BOLD_WHITE + "    XalTools " + this.getDescription().getVersion() + "\n" +
         LIGHT_PURPLE + "   > < / _` | |  | |/ _ \\ / _ \\ / _ \\ | / __| " + 
         GRAY + "    Supports Paper & Folia\n" +
