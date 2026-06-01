@@ -49,7 +49,7 @@ public final class XalTools extends JavaPlugin implements Listener {
         LIGHT_PURPLE + " \\ \\ / /    | |__   __|              | |     \n" +
         LIGHT_PURPLE + "  \\ V / __ _| |  | | ___   ___   ___ | |___  " + 
         BOLD_WHITE + "    XalTools " + this.getDescription().getVersion() + "\n" +
-        LIGHT_PURPLE + "   > < / _` | |  | |/ _ \\ / _ \\ / _ \\ | / __| " + 
+        LIGHT_PURPLE + "   > < / _` | |  | |/ _ \\ / _ \\ / _ \\| / __| " + 
         GRAY + "    Supports Paper & Folia\n" +
         LIGHT_PURPLE + "  / . \\ (_| | |  | | (_) | (_) | (_) | \\__ \\\n" +
         LIGHT_PURPLE + " /_/ \\_\\__,_|_|  |_|\\___/ \\___/ \\___/|_|___/\n" + RESET + "\n"
