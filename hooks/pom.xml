@@ -7,7 +7,7 @@
     <parent>
         <groupId>me.serbob</groupId>
         <artifactId>XalTools-parent</artifactId>
-        <version>1.5.1-rc-12</version>
+        <version>v1.1.3</version>
     </parent>
 
     <artifactId>XalTools-hooks</artifactId>
