@@ -1,4 +1,8 @@
 instant-break: false
+break-leaves: false
+durability-per-log: false
+max-logs: 120
+max-leaves: 220
 
 item:
   material: NETHERITE_AXE

@@ -58,7 +58,13 @@ public abstract class AbstractAbility implements Listener {
         if (event.isCancelled())
             return;
 
-        ItemUtil.reduceDurability(player, tool, 1);
+        if (!shouldSkipDefaultDurabilityReduction(player, event, tool)) {
+            ItemUtil.reduceDurability(player, tool, 1);
+        }
+    }
+
+    protected boolean shouldSkipDefaultDurabilityReduction(Player player, BlockBreakEvent event, ItemStack tool) {
+        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGH)

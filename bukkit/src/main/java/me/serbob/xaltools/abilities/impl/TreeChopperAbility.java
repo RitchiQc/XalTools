@@ -72,7 +72,8 @@ public class TreeChopperAbility extends AbstractAbility {
             return;
         }
 
-        Set<Block> treeBlocks = getTreeBlocks(startBlock);
+        boolean breakLeaves = ConfigSelector.TREECHOPPER.getConfig().getBoolean("break-leaves", false);
+        Set<Block> treeBlocks = getTreeBlocks(startBlock, breakLeaves);
         Location centerLoc = startBlock.getLocation();
 
         try {
@@ -84,6 +85,7 @@ public class TreeChopperAbility extends AbstractAbility {
         }
 
         boolean instantBreak = ConfigSelector.TREECHOPPER.getConfig().getBoolean("instant-break", false);
+        boolean durabilityPerLog = ConfigSelector.TREECHOPPER.getConfig().getBoolean("durability-per-log", false);
 
         int delay = 0;
         for (Block block : treeBlocks) {
@@ -101,6 +103,17 @@ public class TreeChopperAbility extends AbstractAbility {
             if (!instantBreak)
                 ++delay;
         }
+
+        if (durabilityPerLog) {
+            int totalLogs = treeBlocks.size();
+            me.serbob.xaltools.utils.item.ItemUtil.reduceDurability(player, tool, totalLogs - 1);
+        }
+    }
+
+    @Override
+    protected boolean shouldSkipDefaultDurabilityReduction(Player player, BlockBreakEvent event, ItemStack tool) {
+        boolean durabilityPerLog = ConfigSelector.TREECHOPPER.getConfig().getBoolean("durability-per-log", false);
+        return durabilityPerLog;
     }
 
     @Override
@@ -165,22 +178,44 @@ public class TreeChopperAbility extends AbstractAbility {
         return isLogBlock(block) || isLeafBlock(block);
     }
 
-    private Set<Block> getTreeBlocks(Block startBlock) {
+    private Set<Block> getTreeBlocks(Block startBlock, boolean includeLeaves) {
         Set<Block> treeBlocks = new HashSet<>();
         Queue<Block> toCheck = new LinkedList<>();
         toCheck.add(startBlock);
         treeBlocks.add(startBlock);
 
-        while (!toCheck.isEmpty() && treeBlocks.size() < 500) {
+        int maxLogs = ConfigSelector.TREECHOPPER.getConfig().getInt("max-logs", 120);
+        if (maxLogs <= 0) {
+            maxLogs = 120;
+        }
+        int maxLeaves = ConfigSelector.TREECHOPPER.getConfig().getInt("max-leaves", 220);
+        if (maxLeaves <= 0) {
+            maxLeaves = 220;
+        }
+
+        int logCount = 1;
+        int leafCount = 0;
+
+        while (!toCheck.isEmpty() && treeBlocks.size() < (maxLogs + maxLeaves)) {
             Block current = toCheck.poll();
 
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -1; z <= 1; z++) {
+                        if (x == 0 && y == 0 && z == 0) continue;
                         Block relative = current.getRelative(x, y, z);
-                        if (isTreeBlock(relative) && !treeBlocks.contains(relative)) {
+                        if (treeBlocks.contains(relative)) continue;
+
+                        if (isLogBlock(relative)) {
+                            if (logCount >= maxLogs) continue;
                             treeBlocks.add(relative);
                             toCheck.add(relative);
+                            logCount++;
+                        } else if (includeLeaves && isLeafBlock(relative)) {
+                            if (leafCount >= maxLeaves) continue;
+                            treeBlocks.add(relative);
+                            toCheck.add(relative);
+                            leafCount++;
                         }
                     }
                 }
