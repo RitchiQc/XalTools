@@ -115,7 +115,7 @@ public class TreeChopperAbility extends AbstractAbility {
             if (BlacklistManager.getInstance().isBlacklistedBlock(block))
                 continue;
 
-            int currentDelay = instantBreak ? 0 : delay;
+            int currentDelay = instantBreak ? 1 : delay;
             Commons.getFoliaLib().getScheduler().runAtLocationLater(block.getLocation(), () -> {
                 breakBlock(block, tool);
             }, currentDelay);

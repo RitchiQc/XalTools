@@ -10,6 +10,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -45,6 +46,39 @@ public class MagnetAbility extends AbstractAbility implements Listener {
         } else {
             stopMagnetTask(player);
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerInteractLowest(PlayerInteractEvent event) {
+        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR
+                && event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        ItemStack tool = player.getInventory().getItemInMainHand();
+
+        if (tool == null || !hasAbility(tool))
+            return;
+
+        // Prevent double-processing if AbstractAbility already handled it
+        if (event.isCancelled())
+            return;
+
+        event.setCancelled(true);
+
+        boolean enabled = !isEnabled(tool);
+        setEnabled(tool, enabled);
+
+        if (enabled) {
+            startMagnetTask(player);
+            Messages.MAGNET_ENABLED.sendBoth(player);
+        } else {
+            stopMagnetTask(player);
+            Messages.MAGNET_DISABLED.sendBoth(player);
+        }
+
+        player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1.0f, enabled ? 1.5f : 0.8f);
     }
 
     @Override
@@ -92,7 +126,7 @@ public class MagnetAbility extends AbstractAbility implements Listener {
         stopMagnetTask(player);
 
         WrappedTask task = Commons.getFoliaLib().getScheduler().runAtEntityTimer(player, () -> {
-            ItemStack item = player.getInventory().getItemInHand();
+            ItemStack item = player.getInventory().getItemInMainHand();
             if (!hasAbility(item) || !isEnabled(item)) {
                 stopMagnetTask(player);
                 return;
@@ -111,7 +145,7 @@ public class MagnetAbility extends AbstractAbility implements Listener {
 
                 drawParticleLine(droppedItem.getLocation().add(0, 0.3, 0), player.getLocation().add(0, 1, 0));
             }
-        }, 0L, 2L);
+        }, 1L, 2L);
 
         activeTasks.put(player, task);
     }
