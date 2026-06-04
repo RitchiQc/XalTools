@@ -7,17 +7,21 @@ import me.serbob.commons.Commons;
 import me.serbob.commons.enums.ConfigSelector;
 import me.serbob.commons.utils.message.ChatUtil;
 import me.serbob.commons.utils.nbt.NBTUtils;
-import me.serbob.xaltools.abilities.Abilities;
-import me.serbob.xaltools.tools.Tools;
 import org.bukkit.Bukkit;
-
-import java.util.UUID;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -36,6 +40,7 @@ public class SelfDestructManager {
     private long timerUpdateFrequency;
     private String selfDestructPrefix;
     private String timerPrefix;
+    private String dateFormat;
     private Map<String, String> timeFormats = new HashMap<>();
 
     public void load() {
@@ -44,6 +49,7 @@ public class SelfDestructManager {
 
         selfDestructPrefix = ChatUtil.c(config.getString("lore.self_destruct_prefix"));
         timerPrefix = ChatUtil.c(config.getString("lore.timer_prefix"));
+        dateFormat = config.getString("lore.date_format", "dd/MM/yyyy HH:mm");
 
         timeFormats.put("days", config.getString("time_format.days_format"));
         timeFormats.put("hours", config.getString("time_format.hours_format"));
@@ -59,6 +65,10 @@ public class SelfDestructManager {
     private void startTimerSystem() {
         Commons.getFoliaLib().getScheduler().runTimerAsync(asyncTask -> processAllPlayersAsync(),
                 20L, timerUpdateFrequency);
+        
+        // Scan world containers and entities every minute (1200 ticks)
+        Commons.getFoliaLib().getScheduler().runTimer(task -> processWorldItems(),
+                1200L, 1200L);
     }
 
     private void processAllPlayersAsync() {
@@ -81,6 +91,8 @@ public class SelfDestructManager {
             if (NBTUtils.getInstance().hasSecondsRemaining(item)
                     && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
                 migrateItemToTimestamp(item);
+                player.getInventory().setItem(slot, item);
+                item = player.getInventory().getItem(slot);
             }
 
             // Process items with expirationTimestamp (new system)
@@ -91,9 +103,8 @@ public class SelfDestructManager {
 
                 if (remainingMs <= 0) {
                     updates.put(slot, new ItemUpdate(true, 0));
-                } else {
-                    updates.put(slot, new ItemUpdate(false, remainingMs / 1000));
                 }
+                // No lore update needed - date is static
             }
             // Process delayed items (old system, kept for compatibility)
             else if (NBTUtils.getInstance().hasSecondsRemaining(item)) {
@@ -106,6 +117,7 @@ public class SelfDestructManager {
                         secondsRemaining = 1;
                     }
                     NBTUtils.getInstance().setSecondsRemaining(item, -secondsRemaining);
+                    player.getInventory().setItem(slot, item);
                 } else {
                     secondsRemaining -= 1;
                 }
@@ -133,6 +145,7 @@ public class SelfDestructManager {
         long expirationTimestamp = System.currentTimeMillis() + (secondsRemaining * 1000);
         NBTUtils.getInstance().setExpirationTimestamp(item, expirationTimestamp);
         NBTUtils.getInstance().removeSecondsRemaining(item);
+        updateItemLoreWithDate(item, expirationTimestamp);
     }
 
     private void applyUpdatesForPlayer(Player player, Map<Integer, ItemUpdate> updates) {
@@ -152,18 +165,49 @@ public class SelfDestructManager {
             } else {
                 ItemStack item = player.getInventory().getItem(slot);
                 if (item != null && item.getType() != Material.AIR) {
-                    // Update NBT only for delayed items (old system)
+                    // Update NBT and lore only for delayed items (old system)
                     if (NBTUtils.getInstance().hasSecondsRemaining(item)
                             && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
                         NBTUtils.getInstance().setSecondsRemaining(item, update.secondsRemaining);
+                        updateItemLoreWithCountdown(item, Math.abs(update.secondsRemaining));
+                        player.getInventory().setItem(slot, item);
                     }
-                    updateItemLore(item, Math.abs(update.secondsRemaining));
+                    // No lore update for new system - date is static
                 }
             }
         }
     }
 
-    public void updateItemLore(ItemStack item, long secondsRemaining) {
+    public void updateItemLoreWithDate(ItemStack item, long expirationTimestamp) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
+
+        boolean found = false;
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        String dateStr = sdf.format(new Date(expirationTimestamp));
+        String newTimerLine = timerPrefix + dateStr;
+        
+        for (int i = 0; i < lore.size() - 1; i++) {
+            if (lore.get(i).equals(selfDestructPrefix) &&
+                    i + 1 < lore.size() && lore.get(i + 1).startsWith(timerPrefix)) {
+                lore.set(i + 1, newTimerLine);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            lore.add(selfDestructPrefix);
+            lore.add(newTimerLine);
+        }
+
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+    }
+
+    public void updateItemLoreWithCountdown(ItemStack item, long secondsRemaining) {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
@@ -235,21 +279,202 @@ public class SelfDestructManager {
         if (delayed) {
             // Keep old system for delayed items
             NBTUtils.getInstance().setSecondsRemaining(item, -seconds);
+            updateItemLoreWithCountdown(item, seconds);
         } else {
             long expirationTimestamp = System.currentTimeMillis() + (seconds * 1000);
             NBTUtils.getInstance().setExpirationTimestamp(item, expirationTimestamp);
+            updateItemLoreWithDate(item, expirationTimestamp);
         }
         // Generate and store unique item UUID for tracking
         if (!NBTUtils.getInstance().hasItemUuid(item)) {
             NBTUtils.getInstance().setItemUuid(item, UUID.randomUUID().toString());
         }
-        updateItemLore(item, seconds);
     }
 
     public void onPlayerJoin(Player player) {
         processPlayerInventory(player);
     }
 
+    // ==================== WORLD SCANNING ====================
+
+    private void processWorldItems() {
+        for (World world : Bukkit.getWorlds()) {
+            for (Chunk chunk : world.getLoadedChunks()) {
+                // Process tile entities (chests, barrels, hoppers, furnaces, etc.)
+                for (BlockState state : chunk.getTileEntities()) {
+                    if (state instanceof InventoryHolder) {
+                        processInventory(((InventoryHolder) state).getInventory());
+                    }
+                }
+                
+                // Process entities (item frames, armor stands, minecarts, etc.)
+                for (Entity entity : chunk.getEntities()) {
+                    if (entity instanceof Player) continue;
+                    
+                    if (entity instanceof ItemFrame) {
+                        processItemFrame((ItemFrame) entity);
+                    } else if (entity instanceof ArmorStand) {
+                        processArmorStand((ArmorStand) entity);
+                    } else if (entity instanceof InventoryHolder) {
+                        processInventory(((InventoryHolder) entity).getInventory());
+                    }
+                }
+            }
+        }
+    }
+
+    private void processInventory(org.bukkit.inventory.Inventory inventory) {
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            // Migrate old items
+            if (NBTUtils.getInstance().hasSecondsRemaining(item)
+                    && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
+                migrateItemToTimestamp(item);
+                inventory.setItem(slot, item);
+                item = inventory.getItem(slot);
+            }
+
+            boolean destroy = false;
+
+            if (NBTUtils.getInstance().hasExpirationTimestamp(item)) {
+                long expiration = NBTUtils.getInstance().getExpirationTimestamp(item);
+                if (expiration <= System.currentTimeMillis()) {
+                    destroy = true;
+                }
+            } else if (NBTUtils.getInstance().hasSecondsRemaining(item)) {
+                long secondsRemaining = NBTUtils.getInstance().getSecondsRemaining(item);
+                boolean wasDelayed = secondsRemaining < 0;
+
+                if (wasDelayed) {
+                    secondsRemaining = Math.abs(secondsRemaining) - 1;
+                    if (secondsRemaining <= 0) {
+                        secondsRemaining = 1;
+                    }
+                    NBTUtils.getInstance().setSecondsRemaining(item, -secondsRemaining);
+                    inventory.setItem(slot, item);
+                } else {
+                    secondsRemaining -= 1;
+                    if (secondsRemaining <= 0) {
+                        destroy = true;
+                    } else {
+                        NBTUtils.getInstance().setSecondsRemaining(item, secondsRemaining);
+                        inventory.setItem(slot, item);
+                    }
+                }
+            }
+
+            if (destroy) {
+                if (NBTUtils.getInstance().hasItemUuid(item)) {
+                    String itemUuid = NBTUtils.getInstance().getItemUuid(item);
+                    ItemTrackerManager.getInstance().removeItem(itemUuid);
+                }
+                inventory.setItem(slot, null);
+            }
+        }
+    }
+
+    private void processItemFrame(ItemFrame frame) {
+        ItemStack item = frame.getItem();
+        if (item == null || item.getType() == Material.AIR) return;
+
+        if (processItemForDestruction(item)) {
+            frame.setItem(null);
+        } else {
+            // Re-set to persist NBT changes
+            frame.setItem(item);
+        }
+    }
+
+    private void processArmorStand(ArmorStand stand) {
+        // Main hand
+        ItemStack mainHand = stand.getEquipment().getItemInMainHand();
+        if (mainHand != null && mainHand.getType() != Material.AIR) {
+            if (processItemForDestruction(mainHand)) {
+                stand.getEquipment().setItemInMainHand(null);
+            } else {
+                stand.getEquipment().setItemInMainHand(mainHand);
+            }
+        }
+        
+        // Off hand
+        ItemStack offHand = stand.getEquipment().getItemInOffHand();
+        if (offHand != null && offHand.getType() != Material.AIR) {
+            if (processItemForDestruction(offHand)) {
+                stand.getEquipment().setItemInOffHand(null);
+            } else {
+                stand.getEquipment().setItemInOffHand(offHand);
+            }
+        }
+        
+        // Armor
+        ItemStack[] armor = stand.getEquipment().getArmorContents();
+        boolean modified = false;
+        for (int i = 0; i < armor.length; i++) {
+            if (armor[i] != null && armor[i].getType() != Material.AIR) {
+                if (processItemForDestruction(armor[i])) {
+                    armor[i] = null;
+                    modified = true;
+                } else {
+                    modified = true; // NBT may have changed
+                }
+            }
+        }
+        if (modified) {
+            stand.getEquipment().setArmorContents(armor);
+        }
+    }
+
+    /**
+     * Processes an item for potential destruction. Handles migration and countdown.
+     * Returns true if the item should be destroyed.
+     */
+    private boolean processItemForDestruction(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) return false;
+
+        // Migrate old items
+        if (NBTUtils.getInstance().hasSecondsRemaining(item)
+                && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
+            migrateItemToTimestamp(item);
+        }
+
+        boolean destroy = false;
+
+        if (NBTUtils.getInstance().hasExpirationTimestamp(item)) {
+            long expiration = NBTUtils.getInstance().getExpirationTimestamp(item);
+            if (expiration <= System.currentTimeMillis()) {
+                destroy = true;
+            }
+        } else if (NBTUtils.getInstance().hasSecondsRemaining(item)) {
+            long secondsRemaining = NBTUtils.getInstance().getSecondsRemaining(item);
+            boolean wasDelayed = secondsRemaining < 0;
+
+            if (wasDelayed) {
+                secondsRemaining = Math.abs(secondsRemaining) - 1;
+                if (secondsRemaining <= 0) {
+                    secondsRemaining = 1;
+                }
+                NBTUtils.getInstance().setSecondsRemaining(item, -secondsRemaining);
+            } else {
+                secondsRemaining -= 1;
+                if (secondsRemaining <= 0) {
+                    destroy = true;
+                } else {
+                    NBTUtils.getInstance().setSecondsRemaining(item, secondsRemaining);
+                }
+            }
+        }
+
+        if (destroy) {
+            if (NBTUtils.getInstance().hasItemUuid(item)) {
+                String itemUuid = NBTUtils.getInstance().getItemUuid(item);
+                ItemTrackerManager.getInstance().removeItem(itemUuid);
+            }
+        }
+
+        return destroy;
+    }
 
     private static class ItemUpdate {
         final boolean destroy;
