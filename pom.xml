@@ -37,6 +37,8 @@
         <shopgui-api.version>3.0.0</shopgui-api.version>
         <landsapi.version>7.24.1</landsapi.version>
         <worldguard.version>7.0.8</worldguard.version>
+        <hikaricp.version>5.1.0</hikaricp.version>
+        <mysql-connector.version>8.0.33</mysql-connector.version>
     </properties>
 
     <repositories>
@@ -118,6 +120,16 @@
                 <artifactId>worldguard-bukkit</artifactId>
                 <version>${worldguard.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikaricp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector.version}</version>
             </dependency>
 
             <!-- Internal modules -->

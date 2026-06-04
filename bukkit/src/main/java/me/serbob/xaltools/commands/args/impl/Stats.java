@@ -16,15 +16,15 @@ public class Stats implements CommandArgs {
         Map<String, Integer> stats = ItemTrackerManager.getInstance().getStats();
         int total = ItemTrackerManager.getInstance().getTotalCount();
 
-        sender.sendMessage(ChatUtil.c("&7=== XalTools Stats ==="));
+        sender.sendMessage(ChatUtil.c("&7=== XalTools Stats (Estimated) ==="));
 
         for (Tools tool : Tools.values()) {
             String name = tool.name().toLowerCase();
             int count = stats.getOrDefault(name, 0);
-            sender.sendMessage(ChatUtil.c("&e" + capitalize(name) + ": &f" + count));
+            sender.sendMessage(ChatUtil.c("&e" + capitalize(name) + " estimated: &f" + count));
         }
 
-        sender.sendMessage(ChatUtil.c("&7Total: &f" + total + " items"));
+        sender.sendMessage(ChatUtil.c("&7Total estimated: &f" + total + " items"));
         return true;
     }
 

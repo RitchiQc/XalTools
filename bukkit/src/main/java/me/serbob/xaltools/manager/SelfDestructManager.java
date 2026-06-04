@@ -10,6 +10,8 @@ import me.serbob.commons.utils.nbt.NBTUtils;
 import me.serbob.xaltools.abilities.Abilities;
 import me.serbob.xaltools.tools.Tools;
 import org.bukkit.Bukkit;
+
+import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -141,9 +143,9 @@ public class SelfDestructManager {
             if (update.destroy) {
                 ItemStack destroyedItem = player.getInventory().getItem(slot);
                 if (destroyedItem != null) {
-                    String toolName = detectToolName(destroyedItem);
-                    if (toolName != null) {
-                        ItemTrackerManager.getInstance().removeItem(toolName, player.getUniqueId());
+                    if (NBTUtils.getInstance().hasItemUuid(destroyedItem)) {
+                        String itemUuid = NBTUtils.getInstance().getItemUuid(destroyedItem);
+                        ItemTrackerManager.getInstance().removeItem(itemUuid);
                     }
                 }
                 player.getInventory().setItem(slot, null);
@@ -237,6 +239,10 @@ public class SelfDestructManager {
             long expirationTimestamp = System.currentTimeMillis() + (seconds * 1000);
             NBTUtils.getInstance().setExpirationTimestamp(item, expirationTimestamp);
         }
+        // Generate and store unique item UUID for tracking
+        if (!NBTUtils.getInstance().hasItemUuid(item)) {
+            NBTUtils.getInstance().setItemUuid(item, UUID.randomUUID().toString());
+        }
         updateItemLore(item, seconds);
     }
 
@@ -244,18 +250,6 @@ public class SelfDestructManager {
         processPlayerInventory(player);
     }
 
-    private String detectToolName(ItemStack item) {
-        for (Abilities ability : Abilities.values()) {
-            if (ability.getAbility().hasAbility(item)) {
-                for (Tools tool : Tools.values()) {
-                    if (tool.getTool().getClass().getSimpleName().toLowerCase().contains(ability.getAbility().getNbt().toLowerCase())) {
-                        return tool.name().toLowerCase();
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     private static class ItemUpdate {
         final boolean destroy;

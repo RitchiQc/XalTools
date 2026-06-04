@@ -6,6 +6,7 @@ import me.serbob.xaltools.manager.SelfDestructManager;
 import me.serbob.xaltools.manager.ToolManager;
 import me.serbob.xaltools.tools.AbstractTool;
 import me.serbob.commons.utils.message.ChatUtil;
+import me.serbob.commons.utils.nbt.NBTUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,26 +16,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Give implements CommandArgs {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (args.length < 3) {
-            sender.sendMessage(ChatUtil.c("&cUsage: /xaltools give <tool> <player>"));
+        if (args.length < 4) {
+            sender.sendMessage(ChatUtil.c("&cUsage: /xaltools give <tool> <player> <time>"));
             return false;
         }
 
         String toolStr = args[1].toLowerCase();
         String playerName = args[2];
-        long destructTime = -1;
+        long destructTime = SelfDestructManager.getInstance().parseTime(args[3]);
 
-        if (args.length > 3) {
-            destructTime = SelfDestructManager.getInstance().parseTime(args[3]);
-            if (destructTime == -1) {
-                sender.sendMessage(ChatUtil.c("&cInvalid time format! Use: 1d, 5h, 30m"));
-                return false;
-            }
+        if (destructTime == -1) {
+            sender.sendMessage(ChatUtil.c("&cInvalid self-destruct time! Use: 1d, 5h, 30m"));
+            return false;
         }
 
         ToolManager toolManager = ToolManager.getInstance();
@@ -53,18 +52,14 @@ public class Give implements CommandArgs {
         }
 
         ItemStack item = tool.parseItem();
+        String itemUuid = UUID.randomUUID().toString();
+        NBTUtils.getInstance().setItemUuid(item, itemUuid);
 
-        if (destructTime != -1) {
-            SelfDestructManager.getInstance().addTimedItem(player, item, destructTime, false);
-        }
-
+        SelfDestructManager.getInstance().addTimedItem(player, item, destructTime, false);
         player.getInventory().addItem(item);
 
-        long expiresAt = -1;
-        if (destructTime != -1) {
-            expiresAt = System.currentTimeMillis() + destructTime;
-        }
-        ItemTrackerManager.getInstance().addItem(toolStr, player.getUniqueId(), expiresAt > 0 ? expiresAt : null);
+        long expiresAt = System.currentTimeMillis() + destructTime;
+        ItemTrackerManager.getInstance().addItem(toolStr, player.getUniqueId(), itemUuid, expiresAt);
 
         sender.sendMessage(ChatUtil.c("&aTool given successfully to " + player.getName()));
 

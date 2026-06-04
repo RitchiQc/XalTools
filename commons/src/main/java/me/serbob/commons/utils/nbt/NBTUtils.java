@@ -13,6 +13,7 @@ public class NBTUtils {
 
     private static final String SECONDS_KEY = "secondsRemaining";
     private static final String EXPIRATION_KEY = "expirationTimestamp";
+    private static final String ITEM_UUID_KEY = "xaltools_item_uuid";
 
     public boolean hasNbt(ItemStack item, String nbt) {
         return NBT.readNbt(item).getBoolean(nbt);
@@ -79,6 +80,20 @@ public class NBTUtils {
     public void setBoolean(ItemStack item, String key, boolean value) {
         NBT.modify(item, nbt -> {
             nbt.setBoolean(key, value);
+        });
+    }
+
+    public boolean hasItemUuid(ItemStack item) {
+        return NBT.readNbt(item).hasTag(ITEM_UUID_KEY);
+    }
+
+    public String getItemUuid(ItemStack item) {
+        return NBT.readNbt(item).getString(ITEM_UUID_KEY);
+    }
+
+    public void setItemUuid(ItemStack item, String uuid) {
+        NBT.modify(item, nbt -> {
+            nbt.setString(ITEM_UUID_KEY, uuid);
         });
     }
 }

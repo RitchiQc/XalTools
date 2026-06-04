@@ -85,6 +85,8 @@ public final class XalTools extends JavaPlugin implements Listener {
 
         SelfDestructManager.getInstance().initialize();
 
+        startExpiredItemsCleanup();
+
         Bukkit.getServer().getPluginManager().callEvent(new XalToolsLoadedEvent());
 
         load();
@@ -186,6 +188,12 @@ public final class XalTools extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         SelfDestructManager.getInstance().onPlayerJoin(event.getPlayer());
+    }
+
+    private void startExpiredItemsCleanup() {
+        Commons.getFoliaLib().getScheduler().runTimerAsync(asyncTask -> {
+            ItemTrackerManager.getInstance().removeExpiredItems();
+        }, 6000L, 6000L); // Every 5 minutes (6000 ticks)
     }
 
     private void log(String msg) {

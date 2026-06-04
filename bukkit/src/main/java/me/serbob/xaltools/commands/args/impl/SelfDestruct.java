@@ -3,6 +3,7 @@ package me.serbob.xaltools.commands.args.impl;
 import me.serbob.xaltools.commands.args.CommandArgs;
 import me.serbob.xaltools.manager.SelfDestructManager;
 import me.serbob.commons.utils.message.ChatUtil;
+import me.serbob.commons.utils.nbt.NBTUtils;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class SelfDestruct implements CommandArgs {
 
@@ -57,6 +59,10 @@ public class SelfDestruct implements CommandArgs {
         if (destructTime == -1) {
             player.sendMessage(ChatUtil.c("&cInvalid time format! Use: 1d, 5h, 30m"));
             return false;
+        }
+
+        if (!NBTUtils.getInstance().hasItemUuid(item)) {
+            NBTUtils.getInstance().setItemUuid(item, UUID.randomUUID().toString());
         }
 
         SelfDestructManager.getInstance().addTimedItem(player, item, destructTime, isDelayed);

@@ -1,0 +1,14 @@
+# XalTools Configuration
+
+# Storage configuration for item tracking
+# Supports: sqlite (default, local file) or mysql (shared database for multi-server)
+storage:
+  type: sqlite
+  # MySQL settings (only used if type is set to mysql)
+  mysql:
+    host: localhost
+    port: 3306
+    database: xaltools
+    username: root
+    password: ""
+    pool-size: 10
