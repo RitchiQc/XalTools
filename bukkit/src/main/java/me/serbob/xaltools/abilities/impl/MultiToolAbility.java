@@ -103,7 +103,7 @@ public class MultiToolAbility extends AbstractAbility implements Listener {
                 data.lastMaterial = bestTool;
                 updateToolMaterial(player, item, bestTool);
             }
-        }, 0L, 2L);
+        }, 1L, 2L);
 
         activeCheckers.put(player, task);
     }
