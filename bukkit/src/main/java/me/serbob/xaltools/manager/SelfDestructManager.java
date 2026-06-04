@@ -83,10 +83,22 @@ public class SelfDestructManager {
     }
 
     public void processPlayerInventory(Player player) {
+        Map<Integer, ItemUpdate> updates = scanInventory(player.getInventory());
+        if (!updates.isEmpty()) {
+            applyUpdates(player.getInventory(), updates);
+        }
+
+        updates = scanInventory(player.getEnderChest());
+        if (!updates.isEmpty()) {
+            applyUpdates(player.getEnderChest(), updates);
+        }
+    }
+
+    private Map<Integer, ItemUpdate> scanInventory(org.bukkit.inventory.Inventory inventory) {
         Map<Integer, ItemUpdate> updates = new HashMap<>();
 
-        for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
-            ItemStack item = player.getInventory().getItem(slot);
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack item = inventory.getItem(slot);
 
             if (item == null || item.getType() == Material.AIR) continue;
 
@@ -94,8 +106,8 @@ public class SelfDestructManager {
             if (NBTUtils.getInstance().hasSecondsRemaining(item)
                     && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
                 migrateItemToTimestamp(item);
-                player.getInventory().setItem(slot, item);
-                item = player.getInventory().getItem(slot);
+                inventory.setItem(slot, item);
+                item = inventory.getItem(slot);
             }
 
             // Process items with expirationTimestamp (new system)
@@ -120,7 +132,7 @@ public class SelfDestructManager {
                         secondsRemaining = 1;
                     }
                     NBTUtils.getInstance().setSecondsRemaining(item, -secondsRemaining);
-                    player.getInventory().setItem(slot, item);
+                    inventory.setItem(slot, item);
                 } else {
                     secondsRemaining -= 1;
                 }
@@ -133,9 +145,7 @@ public class SelfDestructManager {
             }
         }
 
-        if (!updates.isEmpty()) {
-            applyUpdatesForPlayer(player, updates);
-        }
+        return updates;
     }
 
     private void migrateItemToTimestamp(ItemStack item) {
@@ -151,29 +161,29 @@ public class SelfDestructManager {
         updateItemLoreWithDate(item, expirationTimestamp);
     }
 
-    private void applyUpdatesForPlayer(Player player, Map<Integer, ItemUpdate> updates) {
+    private void applyUpdates(org.bukkit.inventory.Inventory inventory, Map<Integer, ItemUpdate> updates) {
         for (Map.Entry<Integer, ItemUpdate> entry : updates.entrySet()) {
             int slot = entry.getKey();
             ItemUpdate update = entry.getValue();
 
             if (update.destroy) {
-                ItemStack destroyedItem = player.getInventory().getItem(slot);
+                ItemStack destroyedItem = inventory.getItem(slot);
                 if (destroyedItem != null) {
                     if (NBTUtils.getInstance().hasItemUuid(destroyedItem)) {
                         String itemUuid = NBTUtils.getInstance().getItemUuid(destroyedItem);
                         ItemTrackerManager.getInstance().removeItem(itemUuid);
                     }
                 }
-                player.getInventory().setItem(slot, null);
+                inventory.setItem(slot, null);
             } else {
-                ItemStack item = player.getInventory().getItem(slot);
+                ItemStack item = inventory.getItem(slot);
                 if (item != null && item.getType() != Material.AIR) {
                     // Update NBT and lore only for delayed items (old system)
                     if (NBTUtils.getInstance().hasSecondsRemaining(item)
                             && !NBTUtils.getInstance().hasExpirationTimestamp(item)) {
                         NBTUtils.getInstance().setSecondsRemaining(item, update.secondsRemaining);
                         updateItemLoreWithCountdown(item, Math.abs(update.secondsRemaining));
-                        player.getInventory().setItem(slot, item);
+                        inventory.setItem(slot, item);
                     }
                     // No lore update for new system - date is static
                 }
