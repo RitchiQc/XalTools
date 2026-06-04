@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -57,9 +58,24 @@ public class MagnetAbility extends AbstractAbility implements Listener {
 
         event.setCancelled(true);
 
+        EquipmentSlot hand = event.getHand() != null ? event.getHand() : EquipmentSlot.HAND;
+        toggleMagnet(player, hand, tool);
+    }
+
+    @Override
+    protected void onAirInteract(Player player, EquipmentSlot hand, ItemStack tool) {
+        toggleMagnet(player, hand, tool);
+    }
+
+    private void toggleMagnet(Player player, EquipmentSlot hand, ItemStack tool) {
         boolean enabled = !isEnabled(tool);
         setEnabled(tool, enabled);
-        player.getInventory().setItemInMainHand(tool);
+
+        if (hand == EquipmentSlot.OFF_HAND) {
+            player.getInventory().setItemInOffHand(tool);
+        } else {
+            player.getInventory().setItemInMainHand(tool);
+        }
 
         if (enabled) {
             startMagnetTask(player);

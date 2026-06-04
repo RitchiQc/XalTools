@@ -9,6 +9,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
@@ -46,19 +47,33 @@ public class DrainAbility extends AbstractAbility {
 
         if (hasWaterOrLavaNearby(targetBlock)) {
             event.setCancelled(true);
-
-            if (BlacklistManager.getInstance().isBlacklistedBlock(targetBlock))
-                return;
-
-            handleWaterDrain(player, targetBlock);
-
-            Location centerLoc = targetBlock.getLocation();
-            player.playSound(centerLoc, Sound.ITEM_BUCKET_FILL, 1.0f, 0.8f);
-            player.playSound(centerLoc, Sound.ENTITY_PLAYER_SPLASH, 0.5f, 1.2f);
-
-            centerLoc.getWorld().spawnParticle(Particle.BUBBLE,
-                    centerLoc.add(0.5, 0.5, 0.5), 50, 1.5, 1.5, 1.5, 0.05);
+            performDrain(player, targetBlock);
         }
+    }
+
+    @Override
+    protected void onAirInteract(Player player, EquipmentSlot hand, ItemStack tool) {
+        Block lookingAt = getTargetBlock(player, 5);
+        if (lookingAt == null) return;
+        if (lookingAt.getType() != Material.WATER && lookingAt.getType() != Material.LAVA) return;
+
+        if (hasWaterOrLavaNearby(lookingAt)) {
+            performDrain(player, lookingAt);
+        }
+    }
+
+    private void performDrain(Player player, Block targetBlock) {
+        if (BlacklistManager.getInstance().isBlacklistedBlock(targetBlock))
+            return;
+
+        handleWaterDrain(player, targetBlock);
+
+        Location centerLoc = targetBlock.getLocation();
+        player.playSound(centerLoc, Sound.ITEM_BUCKET_FILL, 1.0f, 0.8f);
+        player.playSound(centerLoc, Sound.ENTITY_PLAYER_SPLASH, 0.5f, 1.2f);
+
+        centerLoc.getWorld().spawnParticle(Particle.BUBBLE,
+                centerLoc.add(0.5, 0.5, 0.5), 50, 1.5, 1.5, 1.5, 0.05);
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class AbstractAbility implements Listener {
@@ -73,7 +74,7 @@ public abstract class AbstractAbility implements Listener {
             return;
 
         Player player = event.getPlayer();
-        ItemStack tool = player.getInventory().getItemInMainHand();
+        ItemStack tool = event.getItem();
 
         if (tool == null || !hasAbility(tool))
             return;
@@ -84,6 +85,16 @@ public abstract class AbstractAbility implements Listener {
         }
 
         onInteract(player, event, tool);
+    }
+
+    public void triggerAirInteract(Player player, EquipmentSlot hand, ItemStack tool) {
+        if (tool == null || !hasAbility(tool))
+            return;
+
+        if (isProtected(player, player.getLocation()))
+            return;
+
+        onAirInteract(player, hand, tool);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -107,5 +118,8 @@ public abstract class AbstractAbility implements Listener {
 
     protected abstract void onBlockBreak(Player player, BlockBreakEvent event, ItemStack tool);
     protected abstract void onInteract(Player player, PlayerInteractEvent event, ItemStack tool);
+    protected void onAirInteract(Player player, EquipmentSlot hand, ItemStack tool) {
+        // Default: no air interaction. Override to support right-click in air via ProtocolLib.
+    }
     protected abstract void onBucketFill(Player player, PlayerBucketFillEvent event, ItemStack tool);
 }

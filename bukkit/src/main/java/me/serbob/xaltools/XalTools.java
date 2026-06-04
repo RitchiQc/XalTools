@@ -23,6 +23,7 @@ import me.serbob.xaltools.hooks.shop.ShopGuiPlusBridge;
 import me.serbob.xaltools.manager.BlacklistManager;
 import me.serbob.xaltools.manager.HooksManager;
 import me.serbob.xaltools.manager.ItemTrackerManager;
+import me.serbob.xaltools.manager.ProtocolLibManager;
 import me.serbob.xaltools.manager.SelfDestructManager;
 import me.serbob.xaltools.manager.ToolManager;
 import org.bukkit.Bukkit;
@@ -84,6 +85,7 @@ public final class XalTools extends JavaPlugin implements Listener {
         loadHooks();
 
         SelfDestructManager.getInstance().initialize();
+        ProtocolLibManager.getInstance().initialize(this);
 
         startExpiredItemsCleanup();
 
