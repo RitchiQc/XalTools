@@ -73,7 +73,7 @@ public abstract class AbstractAbility implements Listener {
             return;
 
         Player player = event.getPlayer();
-        ItemStack tool = event.getItem();
+        ItemStack tool = player.getInventory().getItemInHand();
 
         if (tool == null || !hasAbility(tool))
             return;
