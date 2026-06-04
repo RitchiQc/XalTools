@@ -83,6 +83,16 @@ public class NBTUtils {
         });
     }
 
+    public String getString(ItemStack item, String key) {
+        return NBT.readNbt(item).getString(key);
+    }
+
+    public void setString(ItemStack item, String key, String value) {
+        NBT.modify(item, nbt -> {
+            nbt.setString(key, value);
+        });
+    }
+
     public boolean hasItemUuid(ItemStack item) {
         return NBT.readNbt(item).hasTag(ITEM_UUID_KEY);
     }

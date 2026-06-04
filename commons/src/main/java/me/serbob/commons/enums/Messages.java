@@ -16,6 +16,8 @@ public enum Messages {
     SELLAXE_SOLD("sellaxe.sold"),
     MAGNET_ENABLED("magnet.enabled"),
     MAGNET_DISABLED("magnet.disabled"),
+    MAGNET_MODE_NORMAL("magnet.mode_normal"),
+    MAGNET_MODE_FARM("magnet.mode_farm"),
     ;
 
     private final String path;

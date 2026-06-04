@@ -4,6 +4,7 @@ import com.tcoded.folialib.wrapper.task.WrappedTask;
 import me.serbob.commons.Commons;
 import me.serbob.commons.enums.ConfigSelector;
 import me.serbob.commons.enums.Messages;
+import me.serbob.commons.utils.message.ChatUtil;
 import me.serbob.commons.utils.nbt.NBTUtils;
 import me.serbob.xaltools.abilities.AbstractAbility;
 import org.bukkit.*;
@@ -25,6 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MagnetAbility extends AbstractAbility implements Listener {
@@ -78,12 +80,41 @@ public class MagnetAbility extends AbstractAbility implements Listener {
         event.setCancelled(true);
 
         EquipmentSlot hand = event.getHand() != null ? event.getHand() : EquipmentSlot.HAND;
-        toggleMagnet(player, hand, tool);
+
+        if (player.isSneaking()) {
+            changeMode(player, hand, tool);
+        } else {
+            toggleMagnet(player, hand, tool);
+        }
     }
 
     @Override
     protected void onAirInteract(Player player, EquipmentSlot hand, ItemStack tool) {
-        toggleMagnet(player, hand, tool);
+        if (player.isSneaking()) {
+            changeMode(player, hand, tool);
+        } else {
+            toggleMagnet(player, hand, tool);
+        }
+    }
+
+    private void changeMode(Player player, EquipmentSlot hand, ItemStack tool) {
+        MagnetMode currentMode = getMode(tool);
+        MagnetMode newMode = currentMode.next();
+        setMode(tool, newMode);
+
+        if (hand == EquipmentSlot.OFF_HAND) {
+            player.getInventory().setItemInOffHand(tool);
+        } else {
+            player.getInventory().setItemInMainHand(tool);
+        }
+
+        if (newMode == MagnetMode.NORMAL) {
+            Messages.MAGNET_MODE_NORMAL.sendBoth(player);
+        } else {
+            Messages.MAGNET_MODE_FARM.sendBoth(player);
+        }
+
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.2f);
     }
 
     private void toggleMagnet(Player player, EquipmentSlot hand, ItemStack tool) {
@@ -138,11 +169,27 @@ public class MagnetAbility extends AbstractAbility implements Listener {
                 return;
             }
 
+            MagnetMode mode = MagnetMode.NORMAL;
+            if (hasAbility(mainHand) && isEnabled(mainHand)) {
+                mode = getMode(mainHand);
+            } else if (hasAbility(offHand) && isEnabled(offHand)) {
+                mode = getMode(offHand);
+            }
+
             for (Item droppedItem : player.getWorld().getEntitiesByClass(Item.class)) {
                 if (droppedItem.getLocation().distance(player.getLocation()) > range) {
                     continue;
                 }
                 if (droppedItem.isDead() || !droppedItem.isValid()) {
+                    continue;
+                }
+
+                ItemStack itemStack = droppedItem.getItemStack();
+                if (itemStack == null || itemStack.getType() == Material.AIR) {
+                    continue;
+                }
+
+                if (!mode.isAllowed(itemStack.getType())) {
                     continue;
                 }
 
@@ -191,6 +238,58 @@ public class MagnetAbility extends AbstractAbility implements Listener {
             meta.setEnchantmentGlintOverride(enabled);
             item.setItemMeta(meta);
         }
+    }
+
+    private MagnetMode getMode(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) {
+            return MagnetMode.NORMAL;
+        }
+        String modeName = NBTUtils.getInstance().getString(item, "magnet_mode");
+        if (modeName == null || modeName.isEmpty()) {
+            return MagnetMode.NORMAL;
+        }
+        try {
+            return MagnetMode.valueOf(modeName);
+        } catch (IllegalArgumentException e) {
+            return MagnetMode.NORMAL;
+        }
+    }
+
+    private void setMode(ItemStack item, MagnetMode mode) {
+        NBTUtils.getInstance().setString(item, "magnet_mode", mode.name());
+        updateLore(item, mode);
+    }
+
+    private void updateLore(ItemStack item, MagnetMode mode) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        List<String> lore = meta.getLore();
+        if (lore == null) {
+            return;
+        }
+
+        String modePrefix = "Mode: ";
+        String newModeLine = ChatUtil.c(modePrefix + mode.getDisplayName());
+        boolean found = false;
+
+        for (int i = 0; i < lore.size(); i++) {
+            String line = ChatUtil.c(lore.get(i));
+            if (line.contains(ChatUtil.c(modePrefix))) {
+                lore.set(i, newModeLine);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            lore.add(newModeLine);
+        }
+
+        meta.setLore(lore);
+        item.setItemMeta(meta);
     }
 
     @Override
