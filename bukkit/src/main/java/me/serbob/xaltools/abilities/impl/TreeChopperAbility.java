@@ -6,59 +6,73 @@ import me.serbob.xaltools.abilities.AbstractAbility;
 import me.serbob.xaltools.manager.BlacklistManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class TreeChopperAbility extends AbstractAbility {
 
     private static final Set<Material> LOG_TYPES = new HashSet<>();
     private static final Set<Material> LEAF_TYPES = new HashSet<>();
-
-    static {
-        for (Material material : Material.values()) {
-            String name = material.name();
-            if (isLogMaterial(name)) {
-                LOG_TYPES.add(material);
-            } else if (isLeafMaterial(name)) {
-                LEAF_TYPES.add(material);
-            }
-        }
-    }
-
-    private static boolean isLogMaterial(
-            String materialName
-    ) {
-        if (materialName.endsWith("_LOG") || materialName.endsWith("_STEM"))
-            return true;
-
-        return materialName.equals("LOG") || materialName.equals("LOG_2");
-    }
-
-    private static boolean isLeafMaterial(
-            String materialName
-    ) {
-        if (materialName.endsWith("_LEAVES"))
-            return true;
-
-        if (materialName.equals("LEAVES") || materialName.equals("LEAVES_2"))
-            return true;
-
-        if (materialName.equals("NETHER_WART_BLOCK") || materialName.equals("WARPED_WART_BLOCK"))
-            return true;
-
-        return materialName.equals("SHROOMLIGHT");
-    }
+    private static boolean initialized = false;
 
     public TreeChopperAbility() {
         super("amethyst_axe");
+        loadMaterialsFromConfig();
+    }
+
+    private synchronized void loadMaterialsFromConfig() {
+        if (initialized) return;
+
+        FileConfiguration config = ConfigSelector.TREECHOPPER.getConfig();
+
+        // Load log types from config, fallback to defaults
+        List<String> logTypeNames = config.getStringList("log-types");
+        if (logTypeNames != null && !logTypeNames.isEmpty()) {
+            for (String name : logTypeNames) {
+                try {
+                    LOG_TYPES.add(Material.valueOf(name.toUpperCase()));
+                } catch (IllegalArgumentException ignored) {}
+            }
+        } else {
+            // Default fallback
+            for (Material material : Material.values()) {
+                String materialName = material.name();
+                if (materialName.endsWith("_LOG") || materialName.endsWith("_STEM")
+                        || materialName.endsWith("_WOOD") || materialName.endsWith("_HYPHAE")
+                        || materialName.equals("LOG") || materialName.equals("LOG_2")) {
+                    LOG_TYPES.add(material);
+                }
+            }
+        }
+
+        // Load leaf types from config, fallback to defaults
+        List<String> leafTypeNames = config.getStringList("leaf-types");
+        if (leafTypeNames != null && !leafTypeNames.isEmpty()) {
+            for (String name : leafTypeNames) {
+                try {
+                    LEAF_TYPES.add(Material.valueOf(name.toUpperCase()));
+                } catch (IllegalArgumentException ignored) {}
+            }
+        } else {
+            // Default fallback
+            for (Material material : Material.values()) {
+                String materialName = material.name();
+                if (materialName.endsWith("_LEAVES")
+                        || materialName.equals("LEAVES") || materialName.equals("LEAVES_2")
+                        || materialName.equals("NETHER_WART_BLOCK") || materialName.equals("WARPED_WART_BLOCK")
+                        || materialName.equals("SHROOMLIGHT")) {
+                    LEAF_TYPES.add(material);
+                }
+            }
+        }
+
+        initialized = true;
     }
 
     @Override
@@ -86,9 +100,15 @@ public class TreeChopperAbility extends AbstractAbility {
 
         boolean instantBreak = ConfigSelector.TREECHOPPER.getConfig().getBoolean("instant-break", false);
         boolean durabilityPerLog = ConfigSelector.TREECHOPPER.getConfig().getBoolean("durability-per-log", false);
+        int breakDelay = ConfigSelector.TREECHOPPER.getConfig().getInt("break-delay", 2);
+        if (breakDelay < 0) breakDelay = 2;
+
+        // Sort blocks from bottom to top (lowest Y first) for visual effect
+        List<Block> sortedBlocks = new ArrayList<>(treeBlocks);
+        sortedBlocks.sort(Comparator.comparingInt(b -> b.getY()));
 
         int delay = 0;
-        for (Block block : treeBlocks) {
+        for (Block block : sortedBlocks) {
             if (this.isProtected(player, block.getLocation()))
                 continue;
 
@@ -101,7 +121,7 @@ public class TreeChopperAbility extends AbstractAbility {
             }, currentDelay);
 
             if (!instantBreak)
-                ++delay;
+                delay += breakDelay;
         }
 
         if (durabilityPerLog) {
@@ -184,13 +204,13 @@ public class TreeChopperAbility extends AbstractAbility {
         toCheck.add(startBlock);
         treeBlocks.add(startBlock);
 
-        int maxLogs = ConfigSelector.TREECHOPPER.getConfig().getInt("max-logs", 120);
+        int maxLogs = ConfigSelector.TREECHOPPER.getConfig().getInt("max-logs", 300);
         if (maxLogs <= 0) {
-            maxLogs = 120;
+            maxLogs = 300;
         }
-        int maxLeaves = ConfigSelector.TREECHOPPER.getConfig().getInt("max-leaves", 220);
+        int maxLeaves = ConfigSelector.TREECHOPPER.getConfig().getInt("max-leaves", 300);
         if (maxLeaves <= 0) {
-            maxLeaves = 220;
+            maxLeaves = 300;
         }
 
         int logCount = 1;

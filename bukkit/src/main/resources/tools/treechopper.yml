@@ -1,8 +1,55 @@
 instant-break: false
 break-leaves: false
 durability-per-log: false
-max-logs: 120
-max-leaves: 220
+max-logs: 300
+max-leaves: 300
+
+# Délai entre chaque bloc cassé (en ticks Minecraft, 20 ticks = 1 seconde)
+# Par défaut : 2 ticks pour un effet visible mais rapide
+break-delay: 2
+
+# Types de blocs reconnus comme "bûches" (entièrement customisable)
+# Ajoutez ou retirez des matériaux selon vos besoins
+log-types:
+  - "OAK_LOG"
+  - "SPRUCE_LOG"
+  - "BIRCH_LOG"
+  - "JUNGLE_LOG"
+  - "ACACIA_LOG"
+  - "DARK_OAK_LOG"
+  - "MANGROVE_LOG"
+  - "CHERRY_LOG"
+  - "PALE_OAK_LOG"
+  - "OAK_WOOD"
+  - "SPRUCE_WOOD"
+  - "BIRCH_WOOD"
+  - "JUNGLE_WOOD"
+  - "ACACIA_WOOD"
+  - "DARK_OAK_WOOD"
+  - "MANGROVE_WOOD"
+  - "CHERRY_WOOD"
+  - "PALE_OAK_WOOD"
+  - "CRIMSON_STEM"
+  - "WARPED_STEM"
+  - "CRIMSON_HYPHAE"
+  - "WARPED_HYPHAE"
+
+# Types de blocs reconnus comme "feuilles" (entièrement customisable)
+leaf-types:
+  - "OAK_LEAVES"
+  - "SPRUCE_LEAVES"
+  - "BIRCH_LEAVES"
+  - "JUNGLE_LEAVES"
+  - "ACACIA_LEAVES"
+  - "DARK_OAK_LEAVES"
+  - "MANGROVE_LEAVES"
+  - "CHERRY_LEAVES"
+  - "PALE_OAK_LEAVES"
+  - "AZALEA_LEAVES"
+  - "FLOWERING_AZALEA_LEAVES"
+  - "NETHER_WART_BLOCK"
+  - "WARPED_WART_BLOCK"
+  - "SHROOMLIGHT"
 
 item:
   material: NETHERITE_AXE
