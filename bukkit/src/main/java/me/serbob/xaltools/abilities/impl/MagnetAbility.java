@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -41,8 +42,26 @@ public class MagnetAbility extends AbstractAbility implements Listener {
     public void onPlayerItemHeld(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
         ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
+        ItemStack offHand = player.getInventory().getItemInOffHand();
 
-        if (newItem != null && hasAbility(newItem) && isEnabled(newItem)) {
+        if ((newItem != null && hasAbility(newItem) && isEnabled(newItem))
+                || (hasAbility(offHand) && isEnabled(offHand))) {
+            startMagnetTask(player);
+        } else {
+            stopMagnetTask(player);
+        }
+    }
+
+    @EventHandler
+    public void onSwapHandItems(PlayerSwapHandItemsEvent event) {
+        Player player = event.getPlayer();
+        ItemStack mainHand = event.getMainHandItem();
+        ItemStack offHand = event.getOffHandItem();
+
+        boolean hasActiveMagnet = (mainHand != null && hasAbility(mainHand) && isEnabled(mainHand))
+                || (offHand != null && hasAbility(offHand) && isEnabled(offHand));
+
+        if (hasActiveMagnet) {
             startMagnetTask(player);
         } else {
             stopMagnetTask(player);
@@ -110,8 +129,11 @@ public class MagnetAbility extends AbstractAbility implements Listener {
         stopMagnetTask(player);
 
         WrappedTask task = Commons.getFoliaLib().getScheduler().runAtEntityTimer(player, () -> {
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (!hasAbility(item) || !isEnabled(item)) {
+            ItemStack mainHand = player.getInventory().getItemInMainHand();
+            ItemStack offHand = player.getInventory().getItemInOffHand();
+            boolean hasActiveMagnet = (hasAbility(mainHand) && isEnabled(mainHand))
+                    || (hasAbility(offHand) && isEnabled(offHand));
+            if (!hasActiveMagnet) {
                 stopMagnetTask(player);
                 return;
             }

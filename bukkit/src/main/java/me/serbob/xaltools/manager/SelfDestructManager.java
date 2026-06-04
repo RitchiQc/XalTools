@@ -304,28 +304,36 @@ public class SelfDestructManager {
     private void processWorldItems() {
         for (World world : Bukkit.getWorlds()) {
             for (Chunk chunk : world.getLoadedChunks()) {
-                // Process tile entities (chests, barrels, hoppers, furnaces, etc.)
-                for (BlockState state : chunk.getTileEntities()) {
-                    if (state instanceof InventoryHolder) {
-                        boolean modified = processInventory(((InventoryHolder) state).getInventory());
-                        if (modified) {
-                            state.update();
-                        }
-                    }
+                // Delegate chunk processing to the chunk's regional thread for Folia compatibility
+                Commons.getFoliaLib().getScheduler().runAtLocationLater(
+                        chunk.getBlock(0, 0, 0).getLocation(),
+                        () -> processChunk(chunk),
+                        1L);
+            }
+        }
+    }
+
+    private void processChunk(Chunk chunk) {
+        // Process tile entities (chests, barrels, hoppers, furnaces, etc.)
+        for (BlockState state : chunk.getTileEntities()) {
+            if (state instanceof InventoryHolder) {
+                boolean modified = processInventory(((InventoryHolder) state).getInventory());
+                if (modified) {
+                    state.update();
                 }
-                
-                // Process entities (item frames, armor stands, minecarts, etc.)
-                for (Entity entity : chunk.getEntities()) {
-                    if (entity instanceof Player) continue;
-                    
-                    if (entity instanceof ItemFrame) {
-                        processItemFrame((ItemFrame) entity);
-                    } else if (entity instanceof ArmorStand) {
-                        processArmorStand((ArmorStand) entity);
-                    } else if (entity instanceof InventoryHolder) {
-                        processInventory(((InventoryHolder) entity).getInventory());
-                    }
-                }
+            }
+        }
+        
+        // Process entities (item frames, armor stands, minecarts, etc.)
+        for (Entity entity : chunk.getEntities()) {
+            if (entity instanceof Player) continue;
+            
+            if (entity instanceof ItemFrame) {
+                processItemFrame((ItemFrame) entity);
+            } else if (entity instanceof ArmorStand) {
+                processArmorStand((ArmorStand) entity);
+            } else if (entity instanceof InventoryHolder) {
+                processInventory(((InventoryHolder) entity).getInventory());
             }
         }
     }
