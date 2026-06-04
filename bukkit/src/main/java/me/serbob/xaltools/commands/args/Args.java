@@ -5,6 +5,7 @@ import me.serbob.xaltools.commands.args.impl.Give;
 import me.serbob.xaltools.commands.args.impl.Hooks;
 import me.serbob.xaltools.commands.args.impl.Reload;
 import me.serbob.xaltools.commands.args.impl.SelfDestruct;
+import me.serbob.xaltools.commands.args.impl.Stats;
 
 import java.util.Arrays;
 
@@ -12,7 +13,8 @@ public enum Args {
     GIVE("give", new Give()),
     SELFDESTRUCT("selfdestruct", new SelfDestruct()),
     HOOKS("hooks", new Hooks()),
-    RELOAD("reload", new Reload())
+    RELOAD("reload", new Reload()),
+    STATS("stats", new Stats())
     ;
 
     @Getter

@@ -14,6 +14,8 @@ import static org.bukkit.Bukkit.getLogger;
 
 public enum Messages {
     SELLAXE_SOLD("sellaxe.sold"),
+    MAGNET_ENABLED("magnet.enabled"),
+    MAGNET_DISABLED("magnet.disabled"),
     ;
 
     private final String path;

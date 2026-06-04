@@ -71,4 +71,14 @@ public class NBTUtils {
             nbt.setInteger(key, value);
         });
     }
+
+    public boolean getBoolean(ItemStack item, String key) {
+        return NBT.readNbt(item).getBoolean(key);
+    }
+
+    public void setBoolean(ItemStack item, String key, boolean value) {
+        NBT.modify(item, nbt -> {
+            nbt.setBoolean(key, value);
+        });
+    }
 }

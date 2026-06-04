@@ -25,6 +25,7 @@ public enum ConfigSelector {
     MULTITOOL("tools/multitool.yml"),
     SELLAXE("tools/sellaxe.yml"),
     INFINITEFIREWORK("tools/infinitefirework.yml"),
+    MAGNET("tools/magnet.yml"),
     ;
 
     private final String fileName;

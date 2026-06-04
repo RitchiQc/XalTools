@@ -7,6 +7,8 @@ import me.serbob.commons.Commons;
 import me.serbob.commons.enums.ConfigSelector;
 import me.serbob.commons.utils.message.ChatUtil;
 import me.serbob.commons.utils.nbt.NBTUtils;
+import me.serbob.xaltools.abilities.Abilities;
+import me.serbob.xaltools.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -137,6 +139,13 @@ public class SelfDestructManager {
             ItemUpdate update = entry.getValue();
 
             if (update.destroy) {
+                ItemStack destroyedItem = player.getInventory().getItem(slot);
+                if (destroyedItem != null) {
+                    String toolName = detectToolName(destroyedItem);
+                    if (toolName != null) {
+                        ItemTrackerManager.getInstance().removeItem(toolName, player.getUniqueId());
+                    }
+                }
                 player.getInventory().setItem(slot, null);
             } else {
                 ItemStack item = player.getInventory().getItem(slot);
@@ -233,6 +242,19 @@ public class SelfDestructManager {
 
     public void onPlayerJoin(Player player) {
         processPlayerInventory(player);
+    }
+
+    private String detectToolName(ItemStack item) {
+        for (Abilities ability : Abilities.values()) {
+            if (ability.getAbility().hasAbility(item)) {
+                for (Tools tool : Tools.values()) {
+                    if (tool.getTool().getClass().getSimpleName().toLowerCase().contains(ability.getAbility().getNbt().toLowerCase())) {
+                        return tool.name().toLowerCase();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static class ItemUpdate {

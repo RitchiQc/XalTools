@@ -1,2 +1,6 @@
 sellaxe:
   sold: "&aYou got ${money} from selling this chest!"
+
+magnet:
+  enabled: "&aMagnet enabled!"
+  disabled: "&cMagnet disabled!"

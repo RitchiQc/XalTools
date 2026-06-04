@@ -1,0 +1,12 @@
+item:
+  material: LIGHTNING_ROD
+  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ᴍᴀɢɴᴇᴛ"
+  lore:
+    - "&7Right-Click to Toggle On/Off"
+    - "&7Attracts nearby items when On"
+  enchants: []
+
+# Rayon d'attraction (blocs)
+range: 8
+# Vitesse d'attraction (multiplicateur de vélocité)
+speed: 0.15

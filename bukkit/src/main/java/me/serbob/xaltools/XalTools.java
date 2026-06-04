@@ -22,6 +22,7 @@ import me.serbob.xaltools.hooks.shop.PrimeSellerBridge;
 import me.serbob.xaltools.hooks.shop.ShopGuiPlusBridge;
 import me.serbob.xaltools.manager.BlacklistManager;
 import me.serbob.xaltools.manager.HooksManager;
+import me.serbob.xaltools.manager.ItemTrackerManager;
 import me.serbob.xaltools.manager.SelfDestructManager;
 import me.serbob.xaltools.manager.ToolManager;
 import org.bukkit.Bukkit;
@@ -77,6 +78,7 @@ public final class XalTools extends JavaPlugin implements Listener {
         getCommand("xaltools").setTabCompleter(new  XalToolsCommand());
 
         SelfDestructManager.getInstance().load();
+        ItemTrackerManager.getInstance().initialize();
 
         HooksManager.getInstance().load();
         loadHooks();

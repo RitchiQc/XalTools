@@ -13,7 +13,8 @@ public enum Tools {
     TREECHOPPER(new TreeChopper()),
     MULTITOOL(new MultiTool()),
     SELLAXE(new SellAxe()),
-    INFINITEFIREWORK(new InfiniteFirework())
+    INFINITEFIREWORK(new InfiniteFirework()),
+    MAGNET(new Magnet())
     ;
 
     private final @Getter AbstractTool tool;

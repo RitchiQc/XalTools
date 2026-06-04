@@ -1,6 +1,7 @@
 package me.serbob.xaltools.commands.args.impl;
 
 import me.serbob.xaltools.commands.args.CommandArgs;
+import me.serbob.xaltools.manager.ItemTrackerManager;
 import me.serbob.xaltools.manager.SelfDestructManager;
 import me.serbob.xaltools.manager.ToolManager;
 import me.serbob.xaltools.tools.AbstractTool;
@@ -58,6 +59,12 @@ public class Give implements CommandArgs {
         }
 
         player.getInventory().addItem(item);
+
+        long expiresAt = -1;
+        if (destructTime != -1) {
+            expiresAt = System.currentTimeMillis() + destructTime;
+        }
+        ItemTrackerManager.getInstance().addItem(toolStr, player.getUniqueId(), expiresAt > 0 ? expiresAt : null);
 
         sender.sendMessage(ChatUtil.c("&aTool given successfully to " + player.getName()));
 
