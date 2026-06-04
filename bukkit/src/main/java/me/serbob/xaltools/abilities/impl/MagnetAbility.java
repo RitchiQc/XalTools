@@ -48,39 +48,6 @@ public class MagnetAbility extends AbstractAbility implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerInteractLowest(PlayerInteractEvent event) {
-        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR
-                && event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-
-        Player player = event.getPlayer();
-        ItemStack tool = player.getInventory().getItemInMainHand();
-
-        if (tool == null || !hasAbility(tool))
-            return;
-
-        // Prevent double-processing if AbstractAbility already handled it
-        if (event.isCancelled())
-            return;
-
-        event.setCancelled(true);
-
-        boolean enabled = !isEnabled(tool);
-        setEnabled(tool, enabled);
-
-        if (enabled) {
-            startMagnetTask(player);
-            Messages.MAGNET_ENABLED.sendBoth(player);
-        } else {
-            stopMagnetTask(player);
-            Messages.MAGNET_DISABLED.sendBoth(player);
-        }
-
-        player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1.0f, enabled ? 1.5f : 0.8f);
-    }
-
     @Override
     public void onInteract(Player player, PlayerInteractEvent event, ItemStack tool) {
         if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR
@@ -92,6 +59,7 @@ public class MagnetAbility extends AbstractAbility implements Listener {
 
         boolean enabled = !isEnabled(tool);
         setEnabled(tool, enabled);
+        player.getInventory().setItemInMainHand(tool);
 
         if (enabled) {
             startMagnetTask(player);
