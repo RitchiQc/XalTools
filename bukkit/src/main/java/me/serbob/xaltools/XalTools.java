@@ -159,11 +159,7 @@ public final class XalTools extends JavaPlugin implements Listener {
     }
 
     private void loadPermissionHooks() {
-        Map<String, Class<? extends PermissionHook>> permissionHookList = new HashMap<>();
-        // permissionHookList.put("Towny", TownyPermission.class);
-
         List<Map.Entry<String, Class<? extends PermissionHook>>> allHooks = HooksLoader.loadHooks();
-        allHooks.addAll(permissionHookList.entrySet());
 
         allHooks.forEach(entry -> {
             String pluginName = entry.getKey();

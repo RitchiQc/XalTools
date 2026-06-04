@@ -19,7 +19,7 @@ public class DynamicTool extends AbstractTool {
         List<AbstractAbility> abilities = new ArrayList<>();
 
         for (String abilityName : abilityNames) {
-            AbstractAbility ability = Abilities.getAbilityFromNBT(abilityName.toLowerCase());
+            AbstractAbility ability = Abilities.getByNbt(abilityName);
             if (ability != null) {
                 abilities.add(ability);
             }

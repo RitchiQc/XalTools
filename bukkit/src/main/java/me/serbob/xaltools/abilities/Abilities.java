@@ -35,22 +35,18 @@ public enum Abilities {
         this.ability = ability;
     }
 
-    public static AbstractAbility getAbilityFromNBT(String nbt) {
-        AbstractAbility ability = null;
-
-        for (Abilities abilityEnum : values()) {
-            if (!abilityEnum.getAbility().getNbt().equalsIgnoreCase(nbt))
-                continue;
-
-            ability = abilityEnum.getAbility();
-            break;
+    public static AbstractAbility getByNbt(String nbt) {
+        for (Abilities abilities : values()) {
+            if (abilities.getAbility().getNbt().equalsIgnoreCase(nbt)) {
+                return abilities.getAbility();
+            }
         }
 
-        return ability;
+        return null;
     }
 
     public static boolean addAbility(ItemStack itemStack, String nbt) {
-        if (Abilities.getAbilityFromNBT(nbt) == null)
+        if (Abilities.getByNbt(nbt) == null)
             return false;
 
         NBTUtils.getInstance().modifyNbt(itemStack, nbt);
@@ -62,16 +58,5 @@ public enum Abilities {
         AbstractAbility abstractAbility = ability.getAbility();
 
         NBTUtils.getInstance().modifyNbt(itemStack, abstractAbility.getNbt());
-    }
-
-    public static AbstractAbility getByNbt(String nbt) {
-        for (Abilities abilities : values()) {
-            if (!abilities.getAbility().getNbt().equals(nbt))
-                continue;
-
-            return abilities.getAbility();
-        }
-
-        return null;
     }
 }
