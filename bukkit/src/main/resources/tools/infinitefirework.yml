@@ -1,7 +1,8 @@
 item:
   material: FIREWORK_ROCKET
-  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ғɪʀᴇᴡᴏʀᴋ"
+  name: "#A303F9ᴠᴏɪᴅ ғɪʀᴇᴡᴏʀᴋ"
   lore:
-    - "&7Infinite firework"
+    - "&6Infinite firework"
+    - ""
 
   enchants: []

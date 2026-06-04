@@ -1,8 +1,9 @@
 item:
   material: NETHERITE_PICKAXE
-  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ᴅʀɪʟʟ"
+  name: "#A303F9ᴠᴏɪᴅ ᴅʀɪʟʟ"
   lore:
-    - "&7Breaks 9 Blocks at Once"
+    - "&6Breaks 9 Blocks (3*3*1)"
+    - ""
 
   enchants:
     - "MENDING:1"

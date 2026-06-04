@@ -4,8 +4,8 @@ timer_update_frequency: 20
 
 # Item lore formatting
 lore:
-  self_destruct_prefix: "&8Self Destruct: "
-  timer_prefix: "&8"
+  self_destruct_prefix: "&cSelf Destruct: "
+  timer_prefix: "&e"
   date_format: "dd/MM/yyyy HH:mm"
 
 # Time format in lore (used for delayed items and legacy items)

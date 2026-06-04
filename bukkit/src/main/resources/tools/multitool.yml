@@ -1,9 +1,10 @@
 item:
   material: NETHERITE_PICKAXE
-  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ᴍᴜʟᴛɪᴛᴏᴏʟ"
+  name: "#A303F9ᴠᴏɪᴅ ᴍᴜʟᴛɪᴛᴏᴏʟ"
   lore:
     - "&7All Tools in One"
     - "&7Works as Pickaxe, Axe & Shovel"
+    - ""
 
   enchants:
     - "MENDING:1"

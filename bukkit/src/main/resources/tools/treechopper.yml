@@ -1,6 +1,6 @@
 instant-break: false
 break-leaves: false
-durability-per-log: false
+durability-per-log: true
 max-logs: 300
 max-leaves: 300
 
@@ -53,9 +53,10 @@ leaf-types:
 
 item:
   material: NETHERITE_AXE
-  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ᴀxᴇ"
+  name: "#A303F9ᴠᴏɪᴅ ᴀxᴇ"
   lore:
-    - "&7Breaks Tress Instantly"
+    - "&7Breaks Tress in Chain"
+    - ""
 
   enchants:
     - "SILK_TOUCH:1"

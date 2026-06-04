@@ -1,7 +1,8 @@
 item:
   material: BUCKET
-  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ʙᴜᴄᴋᴇᴛ"
+  name: "#A303F9ᴠᴏɪᴅ ʙᴜᴄᴋᴇᴛ"
   lore:
-    - "&7Drains 27 Water At Once"
+    - "&6Drains 27 Water At Once"
+    - ""
 
   enchants: []

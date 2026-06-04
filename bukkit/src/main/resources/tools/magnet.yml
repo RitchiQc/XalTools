@@ -1,9 +1,10 @@
 item:
   material: LIGHTNING_ROD
-  name: "#A303F9ᴀᴍᴇᴛʜʏsᴛ ᴍᴀɢɴᴇᴛ"
+  name: "#A303F9ᴠᴏɪᴅ ᴍᴀɢɴᴇᴛ"
   lore:
     - "&7Right-Click to Toggle On/Off"
-    - "&7Attracts nearby items when On"
+    - "&7Attracts nearby items when Hold"
+    - ""
   enchants: []
 
 # Rayon d'attraction (blocs)
