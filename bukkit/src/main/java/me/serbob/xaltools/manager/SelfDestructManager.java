@@ -23,6 +23,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.TimeZone;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SelfDestructManager {
@@ -41,6 +42,7 @@ public class SelfDestructManager {
     private String selfDestructPrefix;
     private String timerPrefix;
     private String dateFormat;
+    private String timezone;
     private Map<String, String> timeFormats = new HashMap<>();
 
     public void load() {
@@ -50,6 +52,7 @@ public class SelfDestructManager {
         selfDestructPrefix = ChatUtil.c(config.getString("lore.self_destruct_prefix"));
         timerPrefix = ChatUtil.c(config.getString("lore.timer_prefix"));
         dateFormat = config.getString("lore.date_format", "dd/MM/yyyy HH:mm");
+        timezone = config.getString("timezone", "America/New_York");
 
         timeFormats.put("days", config.getString("time_format.days_format"));
         timeFormats.put("hours", config.getString("time_format.hours_format"));
@@ -186,6 +189,7 @@ public class SelfDestructManager {
 
         boolean found = false;
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        sdf.setTimeZone(TimeZone.getTimeZone(timezone));
         String dateStr = sdf.format(new Date(expirationTimestamp));
         String newTimerLine = timerPrefix + dateStr;
         
@@ -303,7 +307,10 @@ public class SelfDestructManager {
                 // Process tile entities (chests, barrels, hoppers, furnaces, etc.)
                 for (BlockState state : chunk.getTileEntities()) {
                     if (state instanceof InventoryHolder) {
-                        processInventory(((InventoryHolder) state).getInventory());
+                        boolean modified = processInventory(((InventoryHolder) state).getInventory());
+                        if (modified) {
+                            state.update();
+                        }
                     }
                 }
                 
@@ -323,7 +330,8 @@ public class SelfDestructManager {
         }
     }
 
-    private void processInventory(org.bukkit.inventory.Inventory inventory) {
+    private boolean processInventory(org.bukkit.inventory.Inventory inventory) {
+        boolean modified = false;
         for (int slot = 0; slot < inventory.getSize(); slot++) {
             ItemStack item = inventory.getItem(slot);
             if (item == null || item.getType() == Material.AIR) continue;
@@ -334,6 +342,7 @@ public class SelfDestructManager {
                 migrateItemToTimestamp(item);
                 inventory.setItem(slot, item);
                 item = inventory.getItem(slot);
+                modified = true;
             }
 
             boolean destroy = false;
@@ -354,6 +363,7 @@ public class SelfDestructManager {
                     }
                     NBTUtils.getInstance().setSecondsRemaining(item, -secondsRemaining);
                     inventory.setItem(slot, item);
+                    modified = true;
                 } else {
                     secondsRemaining -= 1;
                     if (secondsRemaining <= 0) {
@@ -361,6 +371,7 @@ public class SelfDestructManager {
                     } else {
                         NBTUtils.getInstance().setSecondsRemaining(item, secondsRemaining);
                         inventory.setItem(slot, item);
+                        modified = true;
                     }
                 }
             }
@@ -370,9 +381,11 @@ public class SelfDestructManager {
                     String itemUuid = NBTUtils.getInstance().getItemUuid(item);
                     ItemTrackerManager.getInstance().removeItem(itemUuid);
                 }
-                inventory.setItem(slot, null);
+                inventory.clear(slot);
+                modified = true;
             }
         }
+        return modified;
     }
 
     private void processItemFrame(ItemFrame frame) {

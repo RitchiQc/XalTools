@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Project version -->
-        <revision>v1.2.0</revision>
+        <revision>v1.2.1</revision>
 
         <!-- Versions -->
         <paper-api.version>1.21.4-R0.1-SNAPSHOT</paper-api.version>

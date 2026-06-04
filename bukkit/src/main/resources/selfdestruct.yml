@@ -8,6 +8,11 @@ lore:
   timer_prefix: "&e"
   date_format: "dd/MM/yyyy HH:mm"
 
+# Timezone for displaying expiration dates (Java timezone ID)
+# Default: America/New_York
+# Examples: America/Los_Angeles, Europe/Paris, Asia/Tokyo, UTC
+timezone: "America/New_York"
+
 # Time format in lore (used for delayed items and legacy items)
 time_format:
   days_format: "%dd "
