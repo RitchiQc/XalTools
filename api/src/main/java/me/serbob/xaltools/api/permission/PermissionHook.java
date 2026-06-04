@@ -20,5 +20,5 @@ public abstract class PermissionHook {
         return ConfigSelector.HOOKS.getConfig().getBoolean(hookPath, true);
     }
 
-    public abstract boolean isProtected(Player player, Location location);
+    public abstract boolean isBlocked(Player player, Location location);
 }

@@ -79,7 +79,7 @@ public class TreeChopperAbility extends AbstractAbility {
     public void onBlockBreak(Player player, BlockBreakEvent event, ItemStack tool) {
         Block startBlock = event.getBlock();
 
-        if (this.isProtected(player, startBlock.getLocation()))
+        if (this.isBlocked(player, startBlock.getLocation()))
             return;
 
         if (!isLogBlock(startBlock)) {
@@ -109,7 +109,7 @@ public class TreeChopperAbility extends AbstractAbility {
 
         int delay = 0;
         for (Block block : sortedBlocks) {
-            if (this.isProtected(player, block.getLocation()))
+            if (this.isBlocked(player, block.getLocation()))
                 continue;
 
             if (BlacklistManager.getInstance().isBlacklistedBlock(block))

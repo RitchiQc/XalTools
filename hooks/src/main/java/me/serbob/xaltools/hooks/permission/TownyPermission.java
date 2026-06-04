@@ -14,7 +14,7 @@ public class TownyPermission extends PermissionHook {
     }
 
     @Override
-    public boolean isProtected(
+    public boolean isBlocked(
             Player player,
             Location location
     ) {

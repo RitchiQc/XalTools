@@ -30,7 +30,7 @@ public class DrillAbility extends AbstractAbility {
         List<Block> blocksToBreak = get3x3Blocks(centerBlock, face);
 
         for (Block block : blocksToBreak) {
-            if (this.isProtected(player, block.getLocation()))
+            if (this.isBlocked(player, block.getLocation()))
                 continue;
 
             if (BlacklistManager.getInstance().isBlacklistedBlock(block))

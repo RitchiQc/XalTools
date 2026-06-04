@@ -13,7 +13,7 @@ public class GriefPreventionPermission extends PermissionHook {
     }
 
     @Override
-    public boolean isProtected(
+    public boolean isBlocked(
             Player player,
             Location location
     ) {

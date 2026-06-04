@@ -95,7 +95,9 @@ public final class XalTools extends JavaPlugin implements Listener {
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        Commons.getFoliaLib().getScheduler().cancelAllTasks();
+    }
 
     public void load() {
         ToolManager.getInstance().register();
@@ -157,9 +159,8 @@ public final class XalTools extends JavaPlugin implements Listener {
     }
 
     private void loadPermissionHooks() {
-        Map<String, Class<? extends PermissionHook>> permissionHookList = new HashMap() {{
-//            put("Towny", TownyPermission.class);
-        }};
+        Map<String, Class<? extends PermissionHook>> permissionHookList = new HashMap<>();
+        // permissionHookList.put("Towny", TownyPermission.class);
 
         List<Map.Entry<String, Class<? extends PermissionHook>>> allHooks = HooksLoader.loadHooks();
         allHooks.addAll(permissionHookList.entrySet());
@@ -199,6 +200,6 @@ public final class XalTools extends JavaPlugin implements Listener {
     }
 
     private void log(String msg) {
-        Bukkit.getConsoleSender().sendMessage(msg);
+        getLogger().info(msg);
     }
 }

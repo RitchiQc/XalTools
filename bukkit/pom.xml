@@ -23,6 +23,10 @@
             <groupId>me.serbob</groupId>
             <artifactId>XalTools-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>me.serbob</groupId>
+            <artifactId>XalTools-hooks</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.papermc.paper</groupId>

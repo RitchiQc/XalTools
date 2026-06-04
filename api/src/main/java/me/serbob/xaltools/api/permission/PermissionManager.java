@@ -23,11 +23,11 @@ public class PermissionManager {
         activePermissionHooks.add(permissionHook);
     }
 
-    public boolean isProtected(Player player, Location location) {
+    public boolean isBlocked(Player player, Location location) {
         boolean result = false;
 
         for (PermissionHook permissionHook : activePermissionHooks) {
-            if (!permissionHook.isProtected(player, location))
+            if (!permissionHook.isBlocked(player, location))
                 continue;
 
             result = true;

@@ -31,11 +31,11 @@ public abstract class AbstractAbility implements Listener {
         return NBTUtils.getInstance().hasNbt(item, nbt);
     }
 
-    public boolean isProtected(Player player, Location location) {
+    public boolean isBlocked(Player player, Location location) {
         if (BlacklistManager.getInstance().isBlacklistedWorld(location.getWorld()))
             return true;
 
-        return PermissionManager.getInstance().isProtected(player, location);
+        return PermissionManager.getInstance().isBlocked(player, location);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -49,7 +49,7 @@ public abstract class AbstractAbility implements Listener {
         if (!hasAbility(tool))
             return;
 
-        if (isProtected(player, event.getBlock().getLocation())) {
+        if (isBlocked(player, event.getBlock().getLocation())) {
             event.setCancelled(true);
             return;
         }
@@ -79,7 +79,7 @@ public abstract class AbstractAbility implements Listener {
         if (tool == null || !hasAbility(tool))
             return;
 
-        if (isProtected(player, player.getLocation())) {
+        if (isBlocked(player, player.getLocation())) {
             event.setCancelled(true);
             return;
         }
@@ -91,7 +91,7 @@ public abstract class AbstractAbility implements Listener {
         if (tool == null || !hasAbility(tool))
             return;
 
-        if (isProtected(player, player.getLocation()))
+        if (isBlocked(player, player.getLocation()))
             return;
 
         onAirInteract(player, hand, tool);
@@ -108,7 +108,7 @@ public abstract class AbstractAbility implements Listener {
         if (!hasAbility(tool))
             return;
 
-        if (isProtected(player, event.getBlock().getLocation())) {
+        if (isBlocked(player, event.getBlock().getLocation())) {
             event.setCancelled(true);
             return;
         }

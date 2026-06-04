@@ -3,7 +3,7 @@ package me.serbob.xaltools.hooks.permission;
 import me.angeschossen.lands.api.LandsIntegration;
 import me.angeschossen.lands.api.flags.type.RoleFlag;
 import me.angeschossen.lands.api.land.LandWorld;
-import me.serbob.xaltools.XalTools;
+import me.serbob.commons.Commons;
 import me.serbob.xaltools.api.permission.PermissionHook;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,7 +15,7 @@ public class LandsPermission extends PermissionHook {
     private RoleFlag breakBlock = null;
 
     public LandsPermission() {
-        api = LandsIntegration.of(XalTools.getInstance());
+        api = LandsIntegration.of(Commons.getPluginInstance());
         breakBlock = api.getFlagRegistry().getRoleFlags().stream().filter(roleFlag
                 -> roleFlag.getName().equals("block_break")).findFirst().orElse(null);
     }
@@ -26,7 +26,7 @@ public class LandsPermission extends PermissionHook {
     }
 
     @Override
-    public boolean isProtected(
+    public boolean isBlocked(
             Player player,
             Location location
     ) {
