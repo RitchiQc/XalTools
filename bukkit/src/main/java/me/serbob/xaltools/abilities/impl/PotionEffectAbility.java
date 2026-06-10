@@ -287,6 +287,11 @@ public class PotionEffectAbility extends AbstractAbility {
     }
 
     @Override
+    protected boolean shouldSkipDefaultDurabilityReduction(Player player, BlockBreakEvent event, ItemStack tool) {
+        return true;
+    }
+
+    @Override
     public void onInteract(Player player, PlayerInteractEvent event, ItemStack tool) {
         // Potion effect abilities don't handle interact
     }

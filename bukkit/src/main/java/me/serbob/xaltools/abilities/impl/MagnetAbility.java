@@ -296,5 +296,10 @@ public class MagnetAbility extends AbstractAbility implements Listener {
     public void onBlockBreak(Player player, BlockBreakEvent event, ItemStack tool) {}
 
     @Override
+    protected boolean shouldSkipDefaultDurabilityReduction(Player player, BlockBreakEvent event, ItemStack tool) {
+        return true;
+    }
+
+    @Override
     public void onBucketFill(Player player, PlayerBucketFillEvent event, ItemStack tool) {}
 }

@@ -69,6 +69,11 @@ public class NoFallDamageAbility extends AbstractAbility {
     }
 
     @Override
+    protected boolean shouldSkipDefaultDurabilityReduction(Player player, BlockBreakEvent event, ItemStack tool) {
+        return true;
+    }
+
+    @Override
     public void onInteract(Player player, PlayerInteractEvent event, ItemStack tool) {
         // No fall damage ability doesn't handle interact
     }
